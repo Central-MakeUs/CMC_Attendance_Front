@@ -1,7 +1,11 @@
 {
   "permissions": {
     "allow": [
-      "mcp__plugin_figma_figma__get_design_context"
+      "mcp__plugin_figma_figma__get_design_context",
+      "Bash(pnpm add *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://14.38.231.122/cmc/scheme)",
+      "Bash(pnpm codegen *)",
+      "Bash(pnpm remove *)"
     ]
   }
 }

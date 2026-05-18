@@ -1,0 +1,156 @@
+type Query {
+  ping: String!
+  viewer: Viewer
+  parts: [Part!]!
+  generations: [GenerationOption!]!
+  sessions(generationNumber: Int!): [Session!]!
+}
+
+type Mutation {
+  createGeneration(input: CreateGenerationInput!): Generation!
+  createSession(input: CreateSessionInput!): Session!
+  signUp(input: SignUpInput!): SignUpPayload!
+  login(input: LoginInput!): AuthPayload!
+  refreshToken(input: RefreshTokenInput!): AuthPayload!
+}
+
+type Viewer {
+  userId: ID!
+  loginId: String!
+  name: String!
+  nickname: String!
+  part: Part!
+  role: Role!
+}
+
+type Generation {
+  id: ID!
+  number: Int!
+  invitationCode: String!
+}
+
+type GenerationOption {
+  id: ID!
+  number: Int!
+  startDate: String
+  endDate: String
+}
+
+type Session {
+  id: ID!
+  generation: GenerationSummary!
+  sessionName: String!
+  description: String
+  placeName: String!
+  latitude: Float!
+  longitude: Float!
+  sessionDate: String!
+  startTime: String!
+  endTime: String!
+  attendanceStartTime: String!
+  attendanceEndTime: String!
+  attendanceStatus: AttendanceStatus
+  createdBy: String!
+  updatedBy: String!
+  createdAt: String!
+  updatedAt: String!
+}
+
+type AuthPayload {
+  tokenType: String!
+  accessToken: String!
+  refreshToken: String!
+  accessTokenExpiresAt: String!
+  refreshTokenExpiresAt: String!
+  loginId: String!
+  name: String!
+  nickname: String!
+  part: Part!
+  role: Role!
+  generation: GenerationSummary
+  team: TeamSummary
+}
+
+type GenerationSummary {
+  id: ID!
+  number: Int!
+}
+
+type TeamSummary {
+  id: ID!
+  name: String!
+}
+
+type SignUpPayload {
+  userId: ID!
+  loginId: String!
+  name: String!
+  nickname: String!
+  part: Part!
+  role: Role!
+  generation: GenerationSummary!
+  team: TeamSummary
+}
+
+input CreateGenerationInput {
+  number: Int!
+  invitationCode: String!
+  startDate: String
+  endDate: String
+}
+
+input CreateSessionInput {
+  generationNumber: Int!
+  sessionName: String!
+  description: String
+  placeName: String!
+  latitude: Float!
+  longitude: Float!
+  sessionDate: String!
+  startTime: String!
+  endTime: String!
+  attendanceStartTime: String!
+  attendanceEndTime: String!
+}
+
+input LoginInput {
+  loginId: String!
+  password: String!
+}
+
+input SignUpInput {
+  loginId: String!
+  password: String!
+  name: String!
+  nickname: String!
+  part: Part!
+  invitationCode: String!
+}
+
+input RefreshTokenInput {
+  refreshToken: String!
+}
+
+enum Part {
+  PM
+  Designer
+  Web
+  iOS
+  Android
+  Flutter
+  Server
+}
+
+enum Role {
+  ROOT
+  LEAD
+  CHALLENGER
+}
+
+enum AttendanceStatus {
+  PENDING
+  ATTENDANCE
+  LATE
+  ABSENCE
+  EXCUSED_ABSENCE
+}
