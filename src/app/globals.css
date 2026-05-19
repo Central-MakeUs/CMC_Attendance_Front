@@ -10,6 +10,8 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
+  --max-width-mobile: 480px;
+
   --color-primary: #3755ff;
   --color-grayscale-50: #f2f3f6;
   --color-grayscale-100: #d3d5dd;
@@ -23,4 +25,22 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@keyframes float-a {
+  0%, 100% { transform: translate(0px, 0px); }
+  30% { transform: translate(10px, -14px); }
+  65% { transform: translate(-8px, 10px); }
+}
+
+@keyframes float-b {
+  0%, 100% { transform: translate(0px, 0px); }
+  40% { transform: translate(-12px, 8px); }
+  75% { transform: translate(7px, -10px); }
+}
+
+@keyframes float-c {
+  0%, 100% { transform: translate(0px, 0px); }
+  25% { transform: translate(8px, 12px); }
+  60% { transform: translate(-10px, -8px); }
 }

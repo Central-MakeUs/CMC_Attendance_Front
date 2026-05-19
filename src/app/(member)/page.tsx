@@ -1,7 +1,12 @@
+import SplashScreen from './_components/SplashScreen';
+
 export default function AttendancePage() {
   return (
-    <main>
-      <h1>출석 홈</h1>
-    </main>
+    <>
+      <SplashScreen />
+      <main>
+        <h1>출석 홈</h1>
+      </main>
+    </>
   );
 }

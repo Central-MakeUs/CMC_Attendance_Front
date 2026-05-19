@@ -9,5 +9,7 @@ export default async function MemberLayout({
   const session = await verifySession();
   if (!session) unauthorized();
 
-  return <>{children}</>;
+  return (
+    <div className="relative mx-auto w-full max-w-mobile min-h-dvh">{children}</div>
+  );
 }
