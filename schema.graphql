@@ -3,12 +3,23 @@ type Query {
   viewer: Viewer
   parts: [Part!]!
   generations: [GenerationOption!]!
+  generationInvitationCode(generationNumber: Int!): GenerationInvitationCode!
   sessions(generationNumber: Int!): [Session!]!
+  sessionAttendances(
+    sessionId: ID!
+    attendanceStatus: AttendanceStatus
+    part: Part
+    nickname: String
+    page: Int!
+    size: Int!
+  ): SessionAttendancePage!
 }
 
 type Mutation {
   createGeneration(input: CreateGenerationInput!): Generation!
   createSession(input: CreateSessionInput!): Session!
+  updateSession(input: UpdateSessionInput!): Session!
+  deleteSession(input: DeleteSessionInput!): DeleteSessionPayload!
   signUp(input: SignUpInput!): SignUpPayload!
   login(input: LoginInput!): AuthPayload!
   refreshToken(input: RefreshTokenInput!): AuthPayload!
@@ -36,6 +47,12 @@ type GenerationOption {
   endDate: String
 }
 
+type GenerationInvitationCode {
+  id: ID!
+  number: Int!
+  invitationCode: String!
+}
+
 type Session {
   id: ID!
   generation: GenerationSummary!
@@ -54,6 +71,31 @@ type Session {
   updatedBy: String!
   createdAt: String!
   updatedAt: String!
+}
+
+type SessionAttendance {
+  name: String!
+  nickname: String!
+  part: Part!
+  team: String
+  attendanceStatus: AttendanceStatus!
+  updatedAt: String!
+  updatedBy: String!
+  note: String
+}
+
+type SessionAttendancePage {
+  items: [SessionAttendance!]!
+  pageInfo: PageInfo!
+}
+
+type PageInfo {
+  page: Int!
+  size: Int!
+  totalElements: Int!
+  totalPages: Int!
+  hasNext: Boolean!
+  hasPrevious: Boolean!
 }
 
 type AuthPayload {
@@ -92,6 +134,11 @@ type SignUpPayload {
   team: TeamSummary
 }
 
+type DeleteSessionPayload {
+  deletedSessionId: ID!
+  deleted: Boolean!
+}
+
 input CreateGenerationInput {
   number: Int!
   invitationCode: String!
@@ -111,6 +158,24 @@ input CreateSessionInput {
   endTime: String!
   attendanceStartTime: String!
   attendanceEndTime: String!
+}
+
+input UpdateSessionInput {
+  sessionId: ID!
+  sessionName: String!
+  description: String
+  placeName: String!
+  latitude: Float!
+  longitude: Float!
+  sessionDate: String!
+  startTime: String!
+  endTime: String!
+  attendanceStartTime: String!
+  attendanceEndTime: String!
+}
+
+input DeleteSessionInput {
+  sessionId: ID!
 }
 
 input LoginInput {

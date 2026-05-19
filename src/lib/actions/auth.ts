@@ -4,6 +4,20 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { gql } from '@/gql';
 import { gqlClient, ClientError } from '@/lib/gql-client';
+import type { Part } from '@/gql/graphql';
+
+const SignUpMutationDoc = gql(`
+  mutation SignUp($input: SignUpInput!) {
+    signUp(input: $input) {
+      userId
+      loginId
+      name
+      nickname
+      part
+      role
+    }
+  }
+`);
 
 const LoginMutation = gql(`
   mutation Login($input: LoginInput!) {
@@ -60,6 +74,37 @@ export async function loginAction(
   }
 
   redirect('/');
+}
+
+export type SignupState = { error?: string } | undefined;
+
+export async function signupAction(input: {
+  name: string;
+  nickname: string;
+  part: Part;
+  loginId: string;
+  password: string;
+  invitationCode: string;
+}): Promise<SignupState> {
+  try {
+    await gqlClient.request(SignUpMutationDoc, {
+      input: {
+        name: input.name,
+        nickname: input.nickname,
+        part: input.part,
+        loginId: input.loginId,
+        password: input.password,
+        invitationCode: input.invitationCode,
+      },
+    });
+    return {};
+  } catch (e) {
+    if (e instanceof ClientError) {
+      return { error: e.message };
+    }
+    console.error('[signupAction]', e);
+    return { error: '회원가입 중 오류가 발생했습니다.' };
+  }
 }
 
 export async function logoutAction() {
