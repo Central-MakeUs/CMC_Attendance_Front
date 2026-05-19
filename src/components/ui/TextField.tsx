@@ -6,7 +6,7 @@ interface TextFieldProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export default function TextField({ label, id, className = '', ...props }: TextFieldProps) {
   return (
-    <div className={`flex flex-col gap-1 w-full max-w-[358px] ${className}`}>
+    <div className={`flex flex-col gap-1 w-full ${className}`}>
       <label htmlFor={id} className="text-sm font-semibold text-grayscale-500">
         {label}
       </label>

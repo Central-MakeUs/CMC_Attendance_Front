@@ -39,10 +39,15 @@ const DOTS = [
 ];
 
 export default function SplashScreen() {
-  const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(false);
   const [fadeOut, setFadeOut] = useState(false);
 
   useEffect(() => {
+    if (sessionStorage.getItem('splash-shown')) return;
+    sessionStorage.setItem('splash-shown', '1');
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setVisible(true);
+
     const showTimer = setTimeout(() => setFadeOut(true), 2000);
     const hideTimer = setTimeout(() => setVisible(false), 2500);
     return () => {
