@@ -3,5 +3,5 @@ export default function SessionsPage() {
     <div>
       <h1>세션 관리</h1>
     </div>
-  )
+  );
 }
