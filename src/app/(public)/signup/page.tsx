@@ -1,5 +1,5 @@
 import { gql } from '@/gql';
-import { gqlClient } from '@/lib/gql-client';
+import { gqlClient } from '@/lib/graphql/server';
 import type { Part } from '@/gql/graphql';
 import SignupFunnel from './_components/SignupFunnel';
 

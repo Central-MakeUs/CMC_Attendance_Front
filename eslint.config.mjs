@@ -12,7 +12,14 @@ const eslintConfig = defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    'src/gql/**',
   ]),
+  {
+    files: ['**/*.ts'],
+    rules: {
+      'func-style': ['error', 'expression'],
+    },
+  },
 ]);
 
 export default eslintConfig;

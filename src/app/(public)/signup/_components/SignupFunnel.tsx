@@ -2,13 +2,28 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { gql } from '@/gql';
 import type { Part } from '@/gql/graphql';
-import { signupAction } from '@/lib/actions/auth';
+import { createBrowserClient } from '@/lib/graphql/client';
+import { ClientError } from '@/lib/graphql/core';
 import NameStep from './NameStep';
 import PartStep from './PartStep';
 import CredentialsStep from './CredentialsStep';
 import InviteCodeStep from './InviteCodeStep';
 import CompleteStep from './CompleteStep';
+
+const SignUpMutationDoc = gql(`
+  mutation SignUp($input: SignUpInput!) {
+    signUp(input: $input) {
+      userId
+      loginId
+      name
+      nickname
+      part
+      role
+    }
+  }
+`);
 
 type Step = 1 | 2 | 3 | 4 | 5;
 
@@ -55,18 +70,23 @@ export default function SignupFunnel({ parts }: SignupFunnelProps) {
   const handleSignup = async (
     invitationCode: string
   ): Promise<string | undefined> => {
-    const result = await signupAction({
-      name: formData.name,
-      nickname: formData.nickname,
-      part: formData.part as Part,
-      loginId: formData.loginId,
-      password: formData.password,
-      invitationCode,
-    });
-    if (result?.error) return result.error;
-    setStep(5);
-
-    return;
+    try {
+      await createBrowserClient().request(SignUpMutationDoc, {
+        input: {
+          name: formData.name,
+          nickname: formData.nickname,
+          part: formData.part as Part,
+          loginId: formData.loginId,
+          password: formData.password,
+          invitationCode,
+        },
+      });
+      setStep(5);
+    } catch (e) {
+      if (e instanceof ClientError) return e.message;
+      console.error('[handleSignup]', e);
+      return '회원가입 중 오류가 발생했습니다.';
+    }
   };
 
   return (
