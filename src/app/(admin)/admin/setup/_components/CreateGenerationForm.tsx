@@ -1,12 +1,24 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { toast } from 'sonner';
+import { gql } from '@/gql';
+import { createBrowserClient } from '@/lib/graphql/client';
 import TextField from '@/components/ui/TextField';
 import Button from '@/components/ui/Button';
 import CreateGenerationModal from './CreateGenerationModal';
 import { useCreateGenerationForm } from '../_hooks/useCreateGenerationForm';
+
+const CreateGenerationMutation = gql(`
+  mutation CreateGeneration($input: CreateGenerationInput!) {
+    createGeneration(input: $input) {
+      id
+      number
+    }
+  }
+`);
 
 interface Props {
   onBackToSelect: () => void;
@@ -21,11 +33,29 @@ export default function CreateGenerationForm({ onBackToSelect }: Props) {
     validateDateField,
     clearDateError,
   } = useCreateGenerationForm();
+  const router = useRouter();
   const [showModal, setShowModal] = useState(false);
+  const [isPending, setIsPending] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setShowModal(true);
+    setIsPending(true);
+    try {
+      await createBrowserClient().request(CreateGenerationMutation, {
+        input: {
+          number: parseInt(form.generationName),
+          invitationCode: form.inviteCode,
+          startDate: form.startDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+          endDate: form.endDate.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3'),
+        },
+      });
+      router.refresh();
+      setShowModal(true);
+    } catch {
+      toast.error('기수 생성에 실패했어요. 다시 시도해 주세요.');
+    } finally {
+      setIsPending(false);
+    }
   };
 
   return (
@@ -105,7 +135,7 @@ export default function CreateGenerationForm({ onBackToSelect }: Props) {
             />
           </div>
 
-          <Button type="submit" disabled={!isFormValid}>
+          <Button type="submit" disabled={!isFormValid || isPending}>
             완료
           </Button>
         </form>
