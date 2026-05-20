@@ -9,9 +9,10 @@ import CreateGenerationForm from './CreateGenerationForm';
 
 interface Props {
   generations: GenerationsQuery['generations'][number][];
+  isRoot: boolean;
 }
 
-export default function SetupView({ generations }: Props) {
+export default function SetupView({ generations, isRoot }: Props) {
   const [view, setView] = useState<'select' | 'create'>('select');
   const [selectedGeneration, setSelectedGeneration] = useState('');
 
@@ -49,9 +50,11 @@ export default function SetupView({ generations }: Props) {
           <Button type="button" disabled={!selectedGeneration}>
             선택 완료
           </Button>
-          <Button variant="primary-light" onClick={() => setView('create')}>
-            새로운 기수 생성
-          </Button>
+          {isRoot && (
+            <Button variant="primary-light" onClick={() => setView('create')}>
+              새로운 기수 생성
+            </Button>
+          )}
         </div>
       </div>
     </main>

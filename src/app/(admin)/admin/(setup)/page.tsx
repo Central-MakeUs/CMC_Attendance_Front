@@ -1,6 +1,7 @@
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
+import { verifySession } from '@/lib/dal';
 import SetupView from './_components/SetupView';
 
 const GenerationsQuery = gql(`
@@ -28,7 +29,12 @@ async function getGenerations() {
 }
 
 export default async function SetupPage() {
-  const generations = await getGenerations();
+  const [generations, session] = await Promise.all([
+    getGenerations(),
+    verifySession(),
+  ]);
 
-  return <SetupView generations={generations} />;
+  return (
+    <SetupView generations={generations} isRoot={session?.role === 'ROOT'} />
+  );
 }
