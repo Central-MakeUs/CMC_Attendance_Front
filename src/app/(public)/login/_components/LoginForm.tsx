@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { gql } from '@/gql';
 import { createBrowserClient } from '@/lib/graphql/client';
 import { ClientError } from '@/lib/graphql/core';
-import { setAuthTokens } from '@/lib/cookies.client';
+import { setAuthTokens } from '@/lib/cookies/client';
 import Button from '@/components/ui/Button';
 import TextField from '@/components/ui/TextField';
 

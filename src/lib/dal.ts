@@ -1,7 +1,7 @@
 import { cache } from 'react';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
-import { getAccessToken } from '@/lib/cookies.server';
+import { getAccessToken } from '@/lib/cookies/server';
 
 const ViewerQuery = gql(`
   query Viewer {
@@ -32,3 +32,4 @@ const fetchViewer = async () => {
 };
 
 export const verifySession = cache(fetchViewer);
+
