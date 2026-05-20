@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
+import { Toaster } from 'sonner';
 import SplashScreen from '@/components/SplashScreen';
+import { CheckCircleIcon, AlertCircleIcon } from '@/components/icons';
 import './globals.css';
 
 const geistSans = Geist({
@@ -31,6 +33,26 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <SplashScreen />
         {children}
+        <Toaster
+          position="bottom-center"
+          offset={24}
+          style={
+            {
+              '--width': 'min(calc(100vw - 32px), 358px)',
+            } as React.CSSProperties
+          }
+          toastOptions={{
+            unstyled: true,
+            classNames: {
+              toast:
+                'flex items-center gap-2 bg-[#454858] text-white text-sm font-medium leading-normal rounded-[100px] px-4 py-3 w-full',
+            },
+          }}
+          icons={{
+            success: <CheckCircleIcon />,
+            warning: <AlertCircleIcon />,
+          }}
+        />
       </body>
     </html>
   );
