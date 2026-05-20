@@ -1,6 +1,7 @@
 type Query {
   ping: String!
   viewer: Viewer
+  loginIdAvailability(loginId: String!): LoginIdAvailability!
   parts: [Part!]!
   generations: [GenerationOption!]!
   generationInvitationCode(generationNumber: Int!): GenerationInvitationCode!
@@ -20,6 +21,8 @@ type Mutation {
   createSession(input: CreateSessionInput!): Session!
   updateSession(input: UpdateSessionInput!): Session!
   deleteSession(input: DeleteSessionInput!): DeleteSessionPayload!
+  updateSessionAttendanceStatus(input: UpdateSessionAttendanceStatusInput!): SessionAttendance!
+  updateSessionAttendanceNote(input: UpdateSessionAttendanceNoteInput!): SessionAttendance!
   signUp(input: SignUpInput!): SignUpPayload!
   login(input: LoginInput!): AuthPayload!
   refreshToken(input: RefreshTokenInput!): AuthPayload!
@@ -32,6 +35,11 @@ type Viewer {
   nickname: String!
   part: Part!
   role: Role!
+}
+
+type LoginIdAvailability {
+  loginId: String!
+  available: Boolean!
 }
 
 type Generation {
@@ -76,6 +84,7 @@ type Session {
 type SessionAttendance {
   name: String!
   nickname: String!
+  loginId: String!
   part: Part!
   team: String
   attendanceStatus: AttendanceStatus!
@@ -176,6 +185,18 @@ input UpdateSessionInput {
 
 input DeleteSessionInput {
   sessionId: ID!
+}
+
+input UpdateSessionAttendanceStatusInput {
+  sessionId: ID!
+  loginId: String!
+  attendanceStatus: AttendanceStatus!
+}
+
+input UpdateSessionAttendanceNoteInput {
+  sessionId: ID!
+  loginId: String!
+  note: String
 }
 
 input LoginInput {

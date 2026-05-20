@@ -1,59 +1,34 @@
-'use client';
+import { gql } from '@/gql';
+import { gqlClient } from '@/lib/graphql/server';
+import { getAccessToken } from '@/lib/cookies/server';
+import SetupView from './_components/SetupView';
 
-import { useState } from 'react';
-import Image from 'next/image';
-import SelectField from '@/components/ui/SelectField';
-import Button from '@/components/ui/Button';
-import CreateGenerationForm from './_components/CreateGenerationForm';
-
-// TODO: 서버에서 기수 목록을 가져오도록 교체
-const GENERATION_OPTIONS: string[] = [];
-
-export default function SetupPage() {
-  const [view, setView] = useState<'select' | 'create'>('select');
-  const [selectedGeneration, setSelectedGeneration] = useState('');
-
-  if (view === 'create') {
-    return <CreateGenerationForm onBackToSelect={() => setView('select')} />;
+const GenerationsQuery = gql(`
+  query Generations {
+    generations {
+      id
+      number
+    }
   }
+`);
 
-  return (
-    <main
-      className="min-h-dvh flex items-center justify-center px-4"
-      style={{
-        background:
-          'linear-gradient(190.99deg, #ffffff 46.238%, #c1caff 119.75%)',
-      }}
-    >
-      <div className="flex flex-col gap-12 items-center w-[358px]">
-        <div className="flex flex-col gap-5 items-center">
-          <Image src="/cmc-logo.svg" alt="CMC 로고" width={56} height={56} />
-          <h1 className="text-2xl font-bold leading-normal text-grayscale-900 text-center whitespace-pre-wrap">
-            {'안녕하세요!\nCMC 활동 기수를 선택해주세요'}
-          </h1>
-        </div>
+async function getGenerations() {
+  const accessToken = await getAccessToken();
 
-        <SelectField
-          label="활동 기수"
-          options={GENERATION_OPTIONS}
-          value={selectedGeneration}
-          placeholder="활동 기수 선택"
-          onChange={setSelectedGeneration}
-        />
+  if (!accessToken) return [];
 
-        <div className="flex flex-col gap-3 w-full">
-          <Button type="button" disabled={!selectedGeneration}>
-            선택 완료
-          </Button>
-          <button
-            type="button"
-            onClick={() => setView('create')}
-            className="flex items-center justify-center w-full px-3 py-4 rounded-2xl bg-[#c1caff] text-primary font-semibold text-lg leading-[1.4] transition-colors cursor-pointer"
-          >
-            새로운 기수 생성
-          </button>
-        </div>
-      </div>
-    </main>
-  );
+  try {
+    const data = await gqlClient.request(GenerationsQuery, undefined, {
+      Authorization: `Bearer ${accessToken}`,
+    });
+    return data.generations;
+  } catch {
+    return [];
+  }
+}
+
+export default async function SetupPage() {
+  const generations = await getGenerations();
+
+  return <SetupView generations={generations} />;
 }
