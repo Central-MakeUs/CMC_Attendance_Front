@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import SelectField from '@/components/ui/SelectField';
 import Button from '@/components/ui/Button';
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function SetupView({ generations, isRoot }: Props) {
+  const router = useRouter();
   const [view, setView] = useState<'select' | 'create'>('select');
   const [selectedGeneration, setSelectedGeneration] = useState('');
 
@@ -47,7 +49,11 @@ export default function SetupView({ generations, isRoot }: Props) {
         />
 
         <div className="flex flex-col gap-3 w-full">
-          <Button type="button" disabled={!selectedGeneration}>
+          <Button
+            type="button"
+            disabled={!selectedGeneration}
+            onClick={() => router.push(`/admin/sessions?generationNumber=${selectedGeneration}`)}
+          >
             선택 완료
           </Button>
           {isRoot && (

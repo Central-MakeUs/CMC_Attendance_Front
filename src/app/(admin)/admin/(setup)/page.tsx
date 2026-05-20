@@ -9,7 +9,9 @@ const GenerationsQuery = gql(`
     generations {
       id
       number
-    }
+      startDate
+      endDate
+}
   }
 `);
 

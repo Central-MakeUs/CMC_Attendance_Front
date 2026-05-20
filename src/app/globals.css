@@ -35,6 +35,12 @@ body {
   font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+@layer base {
+  button {
+    cursor: pointer;
+  }
+}
+
 @keyframes float-a {
   0%, 100% { transform: translate(0px, 0px); }
   30% { transform: translate(10px, -14px); }

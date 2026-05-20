@@ -1,3 +1,7 @@
+export { default as SessionsIcon } from './SessionsIcon';
+export { default as UsersIcon } from './UsersIcon';
+export { default as MailIcon } from './MailIcon';
+export { default as CopyIcon } from './CopyIcon';
 export { default as ChevronLeftIcon } from './ChevronLeftIcon';
 export { default as ChevronDownIcon } from './ChevronDownIcon';
 export { default as InfoIcon } from './InfoIcon';

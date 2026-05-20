@@ -16,7 +16,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const base =
-    'flex items-center justify-center px-3 font-semibold transition-colors cursor-pointer disabled:cursor-not-allowed';
+    'flex items-center justify-center px-3 font-semibold transition-colors disabled:cursor-not-allowed';
 
   const sizeStyles: Record<ButtonSize, string> = {
     md: 'py-4 text-lg leading-[1.4] rounded-2xl',
