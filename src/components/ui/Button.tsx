@@ -1,6 +1,6 @@
 import { ButtonHTMLAttributes } from 'react';
 
-type ButtonVariant = 'primary' | 'secondary' | 'keyboard';
+type ButtonVariant = 'primary' | 'secondary' | 'primary-light' | 'keyboard';
 type ButtonSize = 'md' | 'sm';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -24,13 +24,19 @@ export default function Button({
   };
 
   const variantStyles: Record<ButtonVariant, string> = {
-    primary: 'w-full bg-primary text-white disabled:bg-grayscale-50 disabled:text-grayscale-700',
+    primary:
+      'w-full bg-primary text-white disabled:bg-grayscale-50 disabled:text-grayscale-700',
     secondary: 'w-full bg-grayscale-50 text-grayscale-700',
-    keyboard: 'w-full bg-primary text-white disabled:bg-grayscale-50 disabled:text-grayscale-700',
+    'primary-light': 'w-full bg-primary-light text-primary',
+    keyboard:
+      'w-full bg-primary text-white disabled:bg-grayscale-50 disabled:text-grayscale-700',
   };
 
   return (
-    <button className={`${base} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`} {...props}>
+    <button
+      className={`${base} ${sizeStyles[size]} ${variantStyles[variant]} ${className}`}
+      {...props}
+    >
       {children}
     </button>
   );

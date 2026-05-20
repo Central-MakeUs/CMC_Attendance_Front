@@ -49,13 +49,9 @@ export default function SetupView({ generations }: Props) {
           <Button type="button" disabled={!selectedGeneration}>
             선택 완료
           </Button>
-          <button
-            type="button"
-            onClick={() => setView('create')}
-            className="flex items-center justify-center w-full px-3 py-4 rounded-2xl bg-[#c1caff] text-primary font-semibold text-lg leading-[1.4] transition-colors cursor-pointer"
-          >
+          <Button variant="primary-light" onClick={() => setView('create')}>
             새로운 기수 생성
-          </button>
+          </Button>
         </div>
       </div>
     </main>
