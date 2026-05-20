@@ -1,7 +1,7 @@
 import { cache } from 'react';
-import { cookies } from 'next/headers';
 import { gql } from '@/gql';
-import { gqlClient } from '@/lib/gql-client';
+import { gqlClient } from '@/lib/graphql/server';
+import { getAccessToken } from '@/lib/cookies.server';
 
 const ViewerQuery = gql(`
   query Viewer {
@@ -16,9 +16,8 @@ const ViewerQuery = gql(`
   }
 `);
 
-export const verifySession = cache(async () => {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('access_token')?.value;
+const fetchViewer = async () => {
+  const accessToken = await getAccessToken();
 
   if (!accessToken) return null;
 
@@ -30,4 +29,6 @@ export const verifySession = cache(async () => {
   } catch {
     return null;
   }
-});
+};
+
+export const verifySession = cache(fetchViewer);

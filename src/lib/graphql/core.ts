@@ -56,21 +56,3 @@ export class GraphQLClient {
     return data;
   }
 }
-
-export const gqlClient = new GraphQLClient(
-  `${process.env.API_BASE_URL}/graphql`
-);
-
-function getAccessToken() {
-  const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]+)/);
-  return match ? match[1] : null;
-}
-
-export function createBrowserClient() {
-  const client = new GraphQLClient('/api/graphql');
-  const token = getAccessToken();
-  if (token) {
-    client.setHeader('Authorization', `Bearer ${token}`);
-  }
-  return client;
-}
