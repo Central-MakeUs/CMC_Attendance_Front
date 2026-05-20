@@ -9,3 +9,4 @@ export { default as CheckCircleIcon } from './CheckCircleIcon';
 export { default as AlertCircleIcon } from './AlertCircleIcon';
 export { default as ChevronRightIcon } from './ChevronRightIcon';
 export { default as MoreVerticalIcon } from './MoreVerticalIcon';
+export { default as SearchIcon } from './SearchIcon';

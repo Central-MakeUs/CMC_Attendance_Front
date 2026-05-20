@@ -2,7 +2,7 @@ import { redirect } from 'next/navigation';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
-import Button from '@/components/ui/Button';
+import CreateSessionButton from './_components/CreateSessionButton';
 import SessionCard from './_components/SessionCard';
 
 const SessionsQuery = gql(`
@@ -62,9 +62,7 @@ export default async function SessionsPage({ searchParams }: Props) {
         <h1 className="font-bold text-2xl leading-normal text-grayscale-900">
           세션 관리
         </h1>
-        <Button className="w-auto! px-6 h-12 rounded-2xl text-lg">
-          세션 생성
-        </Button>
+        <CreateSessionButton />
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(563px,100%),1fr))] gap-6">

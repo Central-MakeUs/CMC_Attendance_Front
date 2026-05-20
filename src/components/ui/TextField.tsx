@@ -14,12 +14,13 @@ function TextFieldLabel({ children, className = '', ...props }: TextFieldLabelPr
   );
 }
 
-interface TextFieldInputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface TextFieldInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'prefix'> {
+  prefix?: React.ReactNode;
   suffix?: React.ReactNode;
   error?: boolean;
 }
 
-function TextFieldInput({ suffix, error, className = '', value, ...props }: TextFieldInputProps) {
+function TextFieldInput({ prefix, suffix, error, className = '', value, ...props }: TextFieldInputProps) {
   const borderClass = error
     ? 'border-red-400'
     : value
@@ -28,6 +29,7 @@ function TextFieldInput({ suffix, error, className = '', value, ...props }: Text
 
   return (
     <div className={`flex items-center border-b-2 transition-colors ${borderClass} ${className}`}>
+      {prefix && <span className="shrink-0 mr-2">{prefix}</span>}
       <input
         autoComplete="off"
         value={value}
