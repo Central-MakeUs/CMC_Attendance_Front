@@ -23,6 +23,7 @@ type Mutation {
   deleteSession(input: DeleteSessionInput!): DeleteSessionPayload!
   updateSessionAttendanceStatus(input: UpdateSessionAttendanceStatusInput!): SessionAttendance!
   updateSessionAttendanceNote(input: UpdateSessionAttendanceNoteInput!): SessionAttendance!
+  requestAttendance(input: RequestAttendanceInput!): SessionAttendance!
   signUp(input: SignUpInput!): SignUpPayload!
   login(input: LoginInput!): AuthPayload!
   refreshToken(input: RefreshTokenInput!): AuthPayload!
@@ -197,6 +198,12 @@ input UpdateSessionAttendanceNoteInput {
   sessionId: ID!
   loginId: String!
   note: String
+}
+
+input RequestAttendanceInput {
+  sessionId: ID!
+  latitude: Float!
+  longitude: Float!
 }
 
 input LoginInput {

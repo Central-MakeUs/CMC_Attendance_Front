@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n": typeof types.GenerationInvitationCodeDocument,
+    "\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      generation {\n        id\n        number\n      }\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      attendanceStartTime\n      attendanceEndTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.SessionsDocument,
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": typeof types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": typeof types.GenerationsDocument,
     "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      accessToken\n      refreshToken\n      accessTokenExpiresAt\n      refreshTokenExpiresAt\n      role\n    }\n  }\n": typeof types.LoginDocument,
@@ -24,6 +25,7 @@ type Documents = {
 };
 const documents: Documents = {
     "\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n": types.GenerationInvitationCodeDocument,
+    "\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      generation {\n        id\n        number\n      }\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      attendanceStartTime\n      attendanceEndTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": types.SessionsDocument,
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": types.GenerationsDocument,
     "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      accessToken\n      refreshToken\n      accessTokenExpiresAt\n      refreshTokenExpiresAt\n      role\n    }\n  }\n": types.LoginDocument,
@@ -50,6 +52,10 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n"): (typeof documents)["\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      generation {\n        id\n        number\n      }\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      attendanceStartTime\n      attendanceEndTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      generation {\n        id\n        number\n      }\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      attendanceStartTime\n      attendanceEndTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
