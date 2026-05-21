@@ -1,9 +1,69 @@
 import { redirect } from 'next/navigation';
-import { SessionsDocument, SessionAttendancesDocument } from '@/gql/graphql';
+import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
 import AttendanceTableView, { AttendanceRecord } from './_components/AttendanceTableView';
 import SessionHeader from './_components/SessionHeader';
+
+const SessionsDocument = gql(`
+  query Sessions($generationNumber: Int!) {
+    sessions(generationNumber: $generationNumber) {
+      id
+      generation {
+        id
+        number
+      }
+      sessionName
+      description
+      placeName
+      attendanceStatus
+      sessionDate
+      startTime
+      endTime
+      attendanceStartTime
+      attendanceEndTime
+      createdBy
+      updatedBy
+      createdAt
+      updatedAt
+    }
+  }
+`);
+
+const SessionAttendancesDocument = gql(`
+  query SessionAttendances(
+    $sessionId: ID!
+    $page: Int!
+    $size: Int!
+    $attendanceStatus: AttendanceStatus
+    $part: Part
+    $nickname: String
+  ) {
+    sessionAttendances(
+      sessionId: $sessionId
+      page: $page
+      size: $size
+      attendanceStatus: $attendanceStatus
+      part: $part
+      nickname: $nickname
+    ) {
+      items {
+        name
+        nickname
+        loginId
+        part
+        team
+        attendanceStatus
+        updatedAt
+        updatedBy
+        note
+      }
+      pageInfo {
+        totalPages
+      }
+    }
+  }
+`);
 
 const PAGE_SIZE = 10;
 

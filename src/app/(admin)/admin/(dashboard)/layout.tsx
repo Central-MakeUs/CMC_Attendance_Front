@@ -1,8 +1,19 @@
 import { Suspense } from 'react';
-import { GenerationsDocument } from '@/gql/graphql';
+import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
 import Sidebar from './_components/Sidebar';
+
+const GenerationsDocument = gql(`
+  query Generations {
+    generations {
+      id
+      number
+      startDate
+      endDate
+    }
+  }
+`);
 
 async function getGenerations() {
   const accessToken = await getAccessToken();

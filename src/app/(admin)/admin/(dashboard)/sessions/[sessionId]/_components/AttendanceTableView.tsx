@@ -1,16 +1,68 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { SessionAttendancesDocument, UpdateSessionAttendanceStatusDocument } from '@/gql/graphql';
+import { gql } from '@/gql';
 import Table, { Column } from '@/components/ui/Table';
 import SegmentTabs from '@/components/ui/SegmentTabs';
 import DropdownSelect from '@/components/ui/DropdownSelect';
 import SearchBar from '@/components/ui/SearchBar';
 import Pagination from '@/components/ui/Pagination';
 import AttendanceStatusSelect from '@/components/attendance/AttendanceStatusSelect';
+import NoteCell from './NoteCell';
 import { AttendanceStatus, Part } from '@/gql/graphql';
 import { formatDateTime } from '@/lib/date';
 import { createBrowserClient } from '@/lib/graphql/client';
+
+const SessionAttendancesDocument = gql(`
+  query SessionAttendances(
+    $sessionId: ID!
+    $page: Int!
+    $size: Int!
+    $attendanceStatus: AttendanceStatus
+    $part: Part
+    $nickname: String
+  ) {
+    sessionAttendances(
+      sessionId: $sessionId
+      page: $page
+      size: $size
+      attendanceStatus: $attendanceStatus
+      part: $part
+      nickname: $nickname
+    ) {
+      items {
+        name
+        nickname
+        loginId
+        part
+        team
+        attendanceStatus
+        updatedAt
+        updatedBy
+        note
+      }
+      pageInfo {
+        totalPages
+      }
+    }
+  }
+`);
+
+const UpdateSessionAttendanceStatusDocument = gql(`
+  mutation UpdateSessionAttendanceStatus($input: UpdateSessionAttendanceStatusInput!) {
+    updateSessionAttendanceStatus(input: $input) {
+      attendanceStatus
+    }
+  }
+`);
+
+const UpdateSessionAttendanceNoteDocument = gql(`
+  mutation UpdateSessionAttendanceNote($input: UpdateSessionAttendanceNoteInput!) {
+    updateSessionAttendanceNote(input: $input) {
+      note
+    }
+  }
+`);
 
 export interface AttendanceRecord {
   name: string;
@@ -26,14 +78,23 @@ export interface AttendanceRecord {
 
 const PAGE_SIZE = 10;
 
-const PARTS: Part[] = ['iOS', 'Android', 'Web', 'Server', 'Flutter', 'Designer', 'PM'];
-
-const STATUS_TABS: Array<{ label: string; value: '전체' | AttendanceStatus }> = [
-  { label: '전체', value: '전체' },
-  { label: '출석 완료', value: 'ATTENDANCE' as AttendanceStatus },
-  { label: '지각', value: 'LATE' as AttendanceStatus },
-  { label: '결석', value: 'ABSENCE' as AttendanceStatus },
+const PARTS: Part[] = [
+  'iOS',
+  'Android',
+  'Web',
+  'Server',
+  'Flutter',
+  'Designer',
+  'PM',
 ];
+
+const STATUS_TABS: Array<{ label: string; value: '전체' | AttendanceStatus }> =
+  [
+    { label: '전체', value: '전체' },
+    { label: '출석 완료', value: 'ATTENDANCE' as AttendanceStatus },
+    { label: '지각', value: 'LATE' as AttendanceStatus },
+    { label: '결석', value: 'ABSENCE' as AttendanceStatus },
+  ];
 
 interface AttendanceTableViewProps {
   sessionId: string;
@@ -50,7 +111,9 @@ export default function AttendanceTableView({
   const [totalPages, setTotalPages] = useState(initialTotalPages);
   const [isLoading, setIsLoading] = useState(false);
 
-  const [selectedStatus, setSelectedStatus] = useState<'전체' | AttendanceStatus>('전체');
+  const [selectedStatus, setSelectedStatus] = useState<
+    '전체' | AttendanceStatus
+  >('전체');
   const [selectedPart, setSelectedPart] = useState<Part | null>(null);
   const [search, setSearch] = useState('');
   const [appliedSearch, setAppliedSearch] = useState('');
@@ -72,7 +135,8 @@ export default function AttendanceTableView({
           sessionId,
           page,
           size: PAGE_SIZE,
-          attendanceStatus: selectedStatus === '전체' ? undefined : selectedStatus,
+          attendanceStatus:
+            selectedStatus === '전체' ? undefined : selectedStatus,
           part: selectedPart ?? undefined,
           nickname: appliedSearch || undefined,
         });
@@ -103,10 +167,31 @@ export default function AttendanceTableView({
     setPage(1);
   };
 
-  const handleAttendanceStatusChange = async (loginId: string, newStatus: AttendanceStatus) => {
+  const handleNoteChange = async (loginId: string, note: string | null) => {
     const prevRecords = records;
     setRecords((prev) =>
-      prev.map((r) => (r.loginId === loginId ? { ...r, attendanceStatus: newStatus } : r))
+      prev.map((r) => (r.loginId === loginId ? { ...r, note } : r))
+    );
+    try {
+      const client = createBrowserClient();
+      await client.request(UpdateSessionAttendanceNoteDocument, {
+        input: { sessionId, loginId, note },
+      });
+    } catch (error) {
+      console.error(error);
+      setRecords(prevRecords);
+    }
+  };
+
+  const handleAttendanceStatusChange = async (
+    loginId: string,
+    newStatus: AttendanceStatus
+  ) => {
+    const prevRecords = records;
+    setRecords((prev) =>
+      prev.map((r) =>
+        r.loginId === loginId ? { ...r, attendanceStatus: newStatus } : r
+      )
     );
     try {
       const client = createBrowserClient();
@@ -129,20 +214,43 @@ export default function AttendanceTableView({
       render: (row) => (
         <AttendanceStatusSelect
           value={row.attendanceStatus}
-          onChange={(status) => handleAttendanceStatusChange(row.loginId, status)}
+          onChange={(status) =>
+            handleAttendanceStatusChange(row.loginId, status)
+          }
         />
       ),
     },
-    { key: 'updatedAt', label: '마지막 수정일', render: (row) => formatDateTime(row.updatedAt) },
-    { key: 'updatedBy', label: '마지막 수정자', render: (row) => row.updatedBy },
-    { key: 'note', label: '비고', render: (row) => row.note },
+    {
+      key: 'updatedAt',
+      label: '마지막 수정일',
+      render: (row) => formatDateTime(row.updatedAt),
+    },
+    {
+      key: 'updatedBy',
+      label: '마지막 수정자',
+      render: (row) => row.updatedBy,
+    },
+    {
+      key: 'note',
+      label: '비고',
+      render: (row) => (
+        <NoteCell
+          value={row.note}
+          onSave={(note) => handleNoteChange(row.loginId, note)}
+        />
+      ),
+    },
   ];
 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 shrink-0">
-          <SegmentTabs tabs={STATUS_TABS} value={selectedStatus} onChange={handleStatusChange} />
+          <SegmentTabs
+            tabs={STATUS_TABS}
+            value={selectedStatus}
+            onChange={handleStatusChange}
+          />
           <DropdownSelect
             options={PARTS}
             value={selectedPart}
@@ -167,7 +275,11 @@ export default function AttendanceTableView({
         />
       </div>
       <div className="flex justify-center">
-        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+        <Pagination
+          currentPage={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       </div>
     </div>
   );
