@@ -1,5 +1,5 @@
 import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { print } from 'graphql';
+import { print, type DocumentNode } from 'graphql';
 
 export class ClientError extends Error {
   response: { status: number; errors?: { message: string }[] };
@@ -36,7 +36,7 @@ export class GraphQLClient {
     variables?: TVariables,
     requestHeaders?: Record<string, string>
   ): Promise<TData> {
-    const query = print(document);
+    const query = print(document as DocumentNode);
 
     const res = await fetch(this.url, {
       method: 'POST',

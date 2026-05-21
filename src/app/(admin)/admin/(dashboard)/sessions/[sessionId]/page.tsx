@@ -1,42 +1,11 @@
 import { redirect } from 'next/navigation';
-import type { TypedDocumentNode } from '@graphql-typed-document-node/core';
-import { SessionsDocument } from '@/gql/graphql';
+import { SessionsDocument, SessionAttendancesDocument } from '@/gql/graphql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
-import AttendanceTableView, {
-  AttendanceRecord,
-} from './_components/AttendanceTableView';
+import AttendanceTableView, { AttendanceRecord } from './_components/AttendanceTableView';
 import SessionHeader from './_components/SessionHeader';
-import { gql } from '@/gql';
 
-type SessionAttendancesResponse = {
-  sessionAttendances: { items: AttendanceRecord[] };
-};
-type SessionAttendancesVariables = {
-  sessionId: string;
-  page: number;
-  size: number;
-};
-
-const SessionAttendancesQuery = gql(`
-  query SessionAttendances($sessionId: ID!, $page: Int!, $size: Int!) {
-    sessionAttendances(sessionId: $sessionId, page: $page, size: $size) {
-      items {
-        name
-        nickname
-        part
-        team
-        attendanceStatus
-        updatedAt
-        updatedBy
-        note
-      }
-    }
-  }
-`) as TypedDocumentNode<
-  SessionAttendancesResponse,
-  SessionAttendancesVariables
->;
+const PAGE_SIZE = 10;
 
 async function getSession(generationNumber: number, sessionId: string) {
   const accessToken = await getAccessToken();
@@ -46,9 +15,7 @@ async function getSession(generationNumber: number, sessionId: string) {
     const data = await gqlClient.request(
       SessionsDocument,
       { generationNumber },
-      {
-        Authorization: `Bearer ${accessToken}`,
-      }
+      { Authorization: `Bearer ${accessToken}` }
     );
     return data.sessions.find((s) => s.id === sessionId) ?? null;
   } catch {
@@ -56,21 +23,22 @@ async function getSession(generationNumber: number, sessionId: string) {
   }
 }
 
-async function getAttendanceRecords(
-  sessionId: string
-): Promise<AttendanceRecord[]> {
+async function getInitialAttendances(sessionId: string) {
   const accessToken = await getAccessToken();
-  if (!accessToken) return [];
+  if (!accessToken) return { records: [], totalPages: 1 };
 
   try {
     const data = await gqlClient.request(
-      SessionAttendancesQuery,
-      { sessionId, page: 1, size: 10 },
+      SessionAttendancesDocument,
+      { sessionId, page: 1, size: PAGE_SIZE },
       { Authorization: `Bearer ${accessToken}` }
     );
-    return data.sessionAttendances.items as AttendanceRecord[];
+    return {
+      records: data.sessionAttendances.items as AttendanceRecord[],
+      totalPages: data.sessionAttendances.pageInfo.totalPages,
+    };
   } catch {
-    return [];
+    return { records: [], totalPages: 1 };
   }
 }
 
@@ -79,18 +47,15 @@ interface Props {
   searchParams: Promise<{ generationNumber?: string }>;
 }
 
-export default async function SessionDetailPage({
-  params,
-  searchParams,
-}: Props) {
+export default async function SessionDetailPage({ params, searchParams }: Props) {
   const { sessionId } = await params;
   const { generationNumber } = await searchParams;
 
   if (!generationNumber) redirect('/admin');
 
-  const [session, records] = await Promise.all([
+  const [session, { records, totalPages }] = await Promise.all([
     getSession(Number(generationNumber), sessionId),
-    getAttendanceRecords(sessionId),
+    getInitialAttendances(sessionId),
   ]);
 
   if (!session) redirect('/admin');
@@ -98,7 +63,11 @@ export default async function SessionDetailPage({
   return (
     <div className="flex flex-col h-full p-6 gap-6 overflow-y-auto">
       <SessionHeader session={session} />
-      <AttendanceTableView records={records} />
+      <AttendanceTableView
+        sessionId={sessionId}
+        initialRecords={records}
+        initialTotalPages={totalPages}
+      />
     </div>
   );
 }

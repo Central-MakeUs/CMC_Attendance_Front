@@ -1,13 +1,16 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { SessionAttendancesDocument } from '@/gql/graphql';
 import Table, { Column } from '@/components/ui/Table';
 import SegmentTabs from '@/components/ui/SegmentTabs';
 import DropdownSelect from '@/components/ui/DropdownSelect';
 import SearchBar from '@/components/ui/SearchBar';
+import Pagination from '@/components/ui/Pagination';
 import AttendanceBadge from '@/components/attendance/AttendanceBadge';
 import { AttendanceStatus, Part } from '@/gql/graphql';
 import { formatDateTime } from '@/lib/date';
+import { createBrowserClient } from '@/lib/graphql/client';
 
 export interface AttendanceRecord {
   name: string;
@@ -20,6 +23,8 @@ export interface AttendanceRecord {
   note: string | null;
 }
 
+const PAGE_SIZE = 10;
+
 const PARTS: Part[] = ['iOS', 'Android', 'Web', 'Server', 'Flutter', 'Designer', 'PM'];
 
 const STATUS_TABS: Array<{ label: string; value: '전체' | AttendanceStatus }> = [
@@ -30,23 +35,72 @@ const STATUS_TABS: Array<{ label: string; value: '전체' | AttendanceStatus }> 
 ];
 
 interface AttendanceTableViewProps {
-  records: AttendanceRecord[];
+  sessionId: string;
+  initialRecords: AttendanceRecord[];
+  initialTotalPages: number;
 }
 
-export default function AttendanceTableView({ records }: AttendanceTableViewProps) {
+export default function AttendanceTableView({
+  sessionId,
+  initialRecords,
+  initialTotalPages,
+}: AttendanceTableViewProps) {
+  const [records, setRecords] = useState(initialRecords);
+  const [totalPages, setTotalPages] = useState(initialTotalPages);
+  const [isLoading, setIsLoading] = useState(false);
+
   const [selectedStatus, setSelectedStatus] = useState<'전체' | AttendanceStatus>('전체');
   const [selectedPart, setSelectedPart] = useState<Part | null>(null);
   const [search, setSearch] = useState('');
   const [appliedSearch, setAppliedSearch] = useState('');
+  const [page, setPage] = useState(1);
 
-  const filtered = useMemo(() => {
-    return records.filter((r) => {
-      const matchesStatus = selectedStatus === '전체' || r.attendanceStatus === selectedStatus;
-      const matchesPart = selectedPart === null || r.part === selectedPart;
-      const matchesSearch = r.nickname.includes(appliedSearch);
-      return matchesStatus && matchesPart && matchesSearch;
-    });
-  }, [records, selectedStatus, selectedPart, appliedSearch]);
+  const isFirstRender = useRef(true);
+
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+
+    const fetchAttendances = async () => {
+      const client = createBrowserClient();
+      setIsLoading(true);
+      try {
+        const data = await client.request(SessionAttendancesDocument, {
+          sessionId,
+          page,
+          size: PAGE_SIZE,
+          attendanceStatus: selectedStatus === '전체' ? undefined : selectedStatus,
+          part: selectedPart ?? undefined,
+          nickname: appliedSearch || undefined,
+        });
+        setRecords(data.sessionAttendances.items as AttendanceRecord[]);
+        setTotalPages(data.sessionAttendances.pageInfo.totalPages);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAttendances();
+  }, [sessionId, page, selectedStatus, selectedPart, appliedSearch]);
+
+  const handleStatusChange = (status: '전체' | AttendanceStatus) => {
+    setSelectedStatus(status);
+    setPage(1);
+  };
+
+  const handlePartChange = (part: Part | null) => {
+    setSelectedPart(part);
+    setPage(1);
+  };
+
+  const handleSearch = () => {
+    setAppliedSearch(search);
+    setPage(1);
+  };
 
   const columns: Column<AttendanceRecord>[] = [
     { key: 'name', label: '이름', render: (row) => row.name },
@@ -66,11 +120,11 @@ export default function AttendanceTableView({ records }: AttendanceTableViewProp
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-2 shrink-0">
-          <SegmentTabs tabs={STATUS_TABS} value={selectedStatus} onChange={setSelectedStatus} />
+          <SegmentTabs tabs={STATUS_TABS} value={selectedStatus} onChange={handleStatusChange} />
           <DropdownSelect
             options={PARTS}
             value={selectedPart}
-            onChange={setSelectedPart}
+            onChange={handlePartChange}
             placeholder="파트 선택"
           />
         </div>
@@ -78,16 +132,21 @@ export default function AttendanceTableView({ records }: AttendanceTableViewProp
         <SearchBar
           value={search}
           onChange={setSearch}
-          onSearch={() => setAppliedSearch(search)}
+          onSearch={handleSearch}
           placeholder="챌린저 검색"
         />
       </div>
-      <Table
-        columns={columns}
-        data={filtered}
-        keyExtractor={(row) => row.nickname}
-        emptyMessage="출석 데이터가 없습니다."
-      />
+      <div className={isLoading ? 'opacity-50 pointer-events-none' : ''}>
+        <Table
+          columns={columns}
+          data={records}
+          keyExtractor={(row) => row.nickname}
+          emptyMessage="출석 데이터가 없습니다."
+        />
+      </div>
+      <div className="flex justify-center">
+        <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+      </div>
     </div>
   );
 }
