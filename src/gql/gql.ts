@@ -15,6 +15,7 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 type Documents = {
     "\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n": typeof types.GenerationInvitationCodeDocument,
+    "\n  query SessionAttendances($sessionId: ID!, $page: Int!, $size: Int!) {\n    sessionAttendances(sessionId: $sessionId, page: $page, size: $size) {\n      items {\n        name\n        nickname\n        part\n        team\n        attendanceStatus\n        updatedAt\n        updatedBy\n        note\n      }\n    }\n  }\n": typeof types.SessionAttendancesDocument,
     "\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      generation {\n        id\n        number\n      }\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      attendanceStartTime\n      attendanceEndTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.SessionsDocument,
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": typeof types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": typeof types.GenerationsDocument,
@@ -25,6 +26,7 @@ type Documents = {
 };
 const documents: Documents = {
     "\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n": types.GenerationInvitationCodeDocument,
+    "\n  query SessionAttendances($sessionId: ID!, $page: Int!, $size: Int!) {\n    sessionAttendances(sessionId: $sessionId, page: $page, size: $size) {\n      items {\n        name\n        nickname\n        part\n        team\n        attendanceStatus\n        updatedAt\n        updatedBy\n        note\n      }\n    }\n  }\n": types.SessionAttendancesDocument,
     "\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      generation {\n        id\n        number\n      }\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      attendanceStartTime\n      attendanceEndTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": types.SessionsDocument,
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": types.GenerationsDocument,
@@ -52,6 +54,10 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n"): (typeof documents)["\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query SessionAttendances($sessionId: ID!, $page: Int!, $size: Int!) {\n    sessionAttendances(sessionId: $sessionId, page: $page, size: $size) {\n      items {\n        name\n        nickname\n        part\n        team\n        attendanceStatus\n        updatedAt\n        updatedBy\n        note\n      }\n    }\n  }\n"): (typeof documents)["\n  query SessionAttendances($sessionId: ID!, $page: Int!, $size: Int!) {\n    sessionAttendances(sessionId: $sessionId, page: $page, size: $size) {\n      items {\n        name\n        nickname\n        part\n        team\n        attendanceStatus\n        updatedAt\n        updatedBy\n        note\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

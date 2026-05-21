@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { formatSessionTime } from '../utils';
 import { ChevronRightIcon, MoreVerticalIcon } from '@/components/icons';
 import SessionFormModal, { type SessionFormData } from './SessionFormModal';
 import type { SessionsQuery } from '@/gql/graphql';
@@ -83,7 +84,7 @@ export default function SessionCard({ session, generationNumber }: Props) {
                 시간
               </span>
               <span className="font-medium text-[16px] leading-normal text-grayscale-700 whitespace-nowrap">
-                {session.sessionDate} {session.startTime}~{session.endTime}
+                {formatSessionTime(session.sessionDate, session.startTime, session.endTime)}
               </span>
             </div>
             <div className="flex items-center gap-3">
