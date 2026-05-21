@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { ChevronDownIcon } from '@/components/icons';
+import Select from './Select';
 
 interface SelectFieldLabelProps {
   children: React.ReactNode;
@@ -27,57 +26,25 @@ interface SelectFieldInputProps {
 function SelectFieldInput({
   options,
   value,
-  placeholder = '선택',
+  placeholder,
   onChange,
   className = '',
 }: SelectFieldInputProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
   return (
-    <div ref={ref} className={`relative ${className}`}>
-      <button
-        type="button"
-        onClick={() => setIsOpen((o) => !o)}
-        className={`flex items-center justify-between w-full h-14 border-b-2 ${value ? 'border-primary' : 'border-grayscale-100'} focus:border-primary focus:outline-none transition-colors`}
-      >
-        <span className={`text-xl ${value ? 'text-grayscale-900' : 'text-grayscale-300'}`}>
-          {value || placeholder}
-        </span>
-        <span className={`shrink-0 transition-transform ${isOpen ? 'rotate-180' : ''}`}>
-          <ChevronDownIcon />
-        </span>
-      </button>
-
-      {isOpen && (
-        <ul className="absolute top-full left-0 w-full z-10 mt-3 max-h-[200px] overflow-y-auto bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)]">
-          {options.map((option) => (
-            <li key={option}>
-              <button
-                type="button"
-                onClick={() => {
-                  onChange(option);
-                  setIsOpen(false);
-                }}
-                className="w-full flex items-center px-4 py-3 text-sm font-medium text-grayscale-500 hover:bg-grayscale-50 transition-colors"
-              >
-                {option}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-    </div>
+    <Select
+      options={options}
+      value={value || null}
+      onChange={(v) => onChange(v ?? '')}
+      placeholder={placeholder}
+      className={className}
+      triggerClassName={(hasValue) =>
+        `flex items-center justify-between w-full h-14 border-b-2 ${hasValue ? 'border-primary' : 'border-grayscale-100'} focus:border-primary focus:outline-none transition-colors`
+      }
+      valueClassName="text-xl text-grayscale-900"
+      placeholderClassName="text-xl text-grayscale-300"
+      dropdownClassName="mt-3 w-full max-h-[200px] overflow-y-auto bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)]"
+      optionClassName="w-full flex items-center px-4 py-3 text-sm font-medium text-grayscale-500 hover:bg-grayscale-50 transition-colors"
+    />
   );
 }
 

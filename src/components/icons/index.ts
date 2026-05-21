@@ -10,3 +10,7 @@ export { default as AlertCircleIcon } from './AlertCircleIcon';
 export { default as ChevronRightIcon } from './ChevronRightIcon';
 export { default as MoreVerticalIcon } from './MoreVerticalIcon';
 export { default as SearchIcon } from './SearchIcon';
+export { default as CheckIcon } from './CheckIcon';
+export { default as WarnCircleIcon } from './WarnCircleIcon';
+export { default as XIcon } from './XIcon';
+export { default as TriangleAlertIcon } from './TriangleAlertIcon';
