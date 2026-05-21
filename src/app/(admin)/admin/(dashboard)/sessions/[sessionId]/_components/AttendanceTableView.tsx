@@ -8,7 +8,7 @@ import DropdownSelect from '@/components/ui/DropdownSelect';
 import SearchBar from '@/components/ui/SearchBar';
 import Pagination from '@/components/ui/Pagination';
 import AttendanceStatusSelect from '@/components/attendance/AttendanceStatusSelect';
-import NoteCell from './NoteCell';
+import NoteCell from '@/components/NoteCell';
 import { AttendanceStatus, Part } from '@/gql/graphql';
 import { formatDateTime } from '@/lib/date';
 import { createBrowserClient } from '@/lib/graphql/client';
