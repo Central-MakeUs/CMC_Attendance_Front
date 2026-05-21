@@ -1,35 +1,34 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { ChevronDownIcon, XIcon } from '@/components/icons';
+import { createContext, useContext, useState, useRef, useEffect, ReactNode } from 'react';
+import { ChevronDownIcon } from '@/components/icons';
 
-interface SelectProps<T extends string> {
-  options: T[];
-  value: T | null;
-  onChange: (value: T | null) => void;
-  placeholder?: string;
-  nullable?: boolean;
-  className?: string;
-  triggerClassName?: string | ((hasValue: boolean) => string);
-  valueClassName?: string;
-  placeholderClassName?: string;
-  dropdownClassName?: string;
-  optionClassName?: string | ((option: T, isSelected: boolean) => string);
+interface SelectContextValue {
+  value: string | null;
+  isOpen: boolean;
+  toggle: () => void;
+  select: (value: string) => void;
 }
 
-export default function Select<T extends string>({
-  options,
+const SelectContext = createContext<SelectContextValue | null>(null);
+
+function useSelectContext() {
+  const ctx = useContext(SelectContext);
+  if (!ctx) throw new Error('Select 하위 컴포넌트는 Select 안에서만 사용할 수 있습니다.');
+  return ctx;
+}
+
+function SelectRoot<T extends string>({
   value,
   onChange,
-  placeholder = '선택',
-  nullable = false,
-  className = '',
-  triggerClassName = '',
-  valueClassName = '',
-  placeholderClassName = '',
-  dropdownClassName = '',
-  optionClassName = '',
-}: SelectProps<T>) {
+  children,
+  className,
+}: {
+  value: T | null;
+  onChange: (value: T | null) => void;
+  children: ReactNode;
+  className?: string;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -43,55 +42,76 @@ export default function Select<T extends string>({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const resolvedTriggerClassName =
-    typeof triggerClassName === 'function' ? triggerClassName(value !== null) : triggerClassName;
-
-  const getOptionClass = (option: T) => {
-    if (typeof optionClassName === 'function') return optionClassName(option, value === option);
-    return optionClassName;
-  };
-
   return (
-    <div ref={ref} className={`relative ${className}`}>
-      <div
-        role="button"
-        onClick={() => setIsOpen((o) => !o)}
-        className={resolvedTriggerClassName}
-      >
-        <span className={value !== null ? valueClassName : placeholderClassName}>
-          {value ?? placeholder}
-        </span>
-        <div className="flex items-center gap-1 shrink-0">
-          {nullable && value && (
-            <button
-              type="button"
-              onClick={(e) => { e.stopPropagation(); onChange(null); }}
-              className="flex items-center text-grayscale-400 hover:text-grayscale-600"
-            >
-              <XIcon />
-            </button>
-          )}
-          <span className={`transition-transform ${isOpen ? 'rotate-180' : ''}`}>
-            <ChevronDownIcon />
-          </span>
-        </div>
+    <SelectContext.Provider
+      value={{
+        value,
+        isOpen,
+        toggle: () => setIsOpen((o) => !o),
+        select: (v) => { onChange(v as T); setIsOpen(false); },
+      }}
+    >
+      <div ref={ref} className={`relative ${className ?? ''}`}>
+        {children}
       </div>
+    </SelectContext.Provider>
+  );
+}
 
-      {isOpen && (
-        <ul className={`absolute top-full left-0 z-10 ${dropdownClassName}`}>
-          {options.map((option) => (
-            <li key={option}>
-              <button
-                type="button"
-                onClick={() => { onChange(option); setIsOpen(false); }}
-                className={getOptionClass(option)}
-              >
-                {option}
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
+function SelectTrigger({ children, className }: { children: ReactNode; className?: string }) {
+  const { toggle } = useSelectContext();
+  return (
+    <div role="button" onClick={toggle} className={className}>
+      {children}
     </div>
   );
 }
+
+function SelectChevron({ className }: { className?: string }) {
+  const { isOpen } = useSelectContext();
+  return (
+    <span className={`transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''} ${className ?? ''}`}>
+      <ChevronDownIcon />
+    </span>
+  );
+}
+
+function SelectContent({ children, className }: { children: ReactNode; className?: string }) {
+  const { isOpen } = useSelectContext();
+  if (!isOpen) return null;
+  return (
+    <ul className={`absolute top-full left-0 z-10 ${className ?? ''}`}>
+      {children}
+    </ul>
+  );
+}
+
+function SelectItem({
+  value,
+  children,
+  className,
+}: {
+  value: string;
+  children: ReactNode;
+  className?: string | ((isSelected: boolean) => string);
+}) {
+  const { select, value: selectedValue } = useSelectContext();
+  const isSelected = value === selectedValue;
+  const resolvedClass = typeof className === 'function' ? className(isSelected) : (className ?? '');
+  return (
+    <li>
+      <button type="button" onClick={() => select(value)} className={resolvedClass}>
+        {children}
+      </button>
+    </li>
+  );
+}
+
+const Select = Object.assign(SelectRoot, {
+  Trigger: SelectTrigger,
+  Chevron: SelectChevron,
+  Content: SelectContent,
+  Item: SelectItem,
+});
+
+export default Select;

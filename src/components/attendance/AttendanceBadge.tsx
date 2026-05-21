@@ -7,7 +7,7 @@ import {
   TriangleAlertIcon,
 } from '@/components/icons';
 
-const statusConfig: Record<
+export const statusConfig: Record<
   AttendanceStatus,
   { label: string; className: string; icon: ReactNode }
 > = {

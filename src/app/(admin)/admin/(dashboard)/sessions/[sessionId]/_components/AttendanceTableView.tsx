@@ -1,13 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
-import { SessionAttendancesDocument } from '@/gql/graphql';
+import { SessionAttendancesDocument, UpdateSessionAttendanceStatusDocument } from '@/gql/graphql';
 import Table, { Column } from '@/components/ui/Table';
 import SegmentTabs from '@/components/ui/SegmentTabs';
 import DropdownSelect from '@/components/ui/DropdownSelect';
 import SearchBar from '@/components/ui/SearchBar';
 import Pagination from '@/components/ui/Pagination';
-import AttendanceBadge from '@/components/attendance/AttendanceBadge';
+import AttendanceStatusSelect from '@/components/attendance/AttendanceStatusSelect';
 import { AttendanceStatus, Part } from '@/gql/graphql';
 import { formatDateTime } from '@/lib/date';
 import { createBrowserClient } from '@/lib/graphql/client';
@@ -15,6 +15,7 @@ import { createBrowserClient } from '@/lib/graphql/client';
 export interface AttendanceRecord {
   name: string;
   nickname: string;
+  loginId: string;
   part: Part;
   team: string;
   attendanceStatus: AttendanceStatus;
@@ -102,6 +103,22 @@ export default function AttendanceTableView({
     setPage(1);
   };
 
+  const handleAttendanceStatusChange = async (loginId: string, newStatus: AttendanceStatus) => {
+    const prevRecords = records;
+    setRecords((prev) =>
+      prev.map((r) => (r.loginId === loginId ? { ...r, attendanceStatus: newStatus } : r))
+    );
+    try {
+      const client = createBrowserClient();
+      await client.request(UpdateSessionAttendanceStatusDocument, {
+        input: { sessionId, loginId, attendanceStatus: newStatus },
+      });
+    } catch (error) {
+      console.error(error);
+      setRecords(prevRecords);
+    }
+  };
+
   const columns: Column<AttendanceRecord>[] = [
     { key: 'name', label: '이름', render: (row) => row.name },
     { key: 'nickname', label: '닉네임', render: (row) => row.nickname },
@@ -109,7 +126,12 @@ export default function AttendanceTableView({
     {
       key: 'attendanceStatus',
       label: '출석 현황',
-      render: (row) => <AttendanceBadge status={row.attendanceStatus} />,
+      render: (row) => (
+        <AttendanceStatusSelect
+          value={row.attendanceStatus}
+          onChange={(status) => handleAttendanceStatusChange(row.loginId, status)}
+        />
+      ),
     },
     { key: 'updatedAt', label: '마지막 수정일', render: (row) => formatDateTime(row.updatedAt) },
     { key: 'updatedBy', label: '마지막 수정자', render: (row) => row.updatedBy },

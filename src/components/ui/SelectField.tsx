@@ -31,20 +31,29 @@ function SelectFieldInput({
   className = '',
 }: SelectFieldInputProps) {
   return (
-    <Select
-      options={options}
-      value={value || null}
-      onChange={(v) => onChange(v ?? '')}
-      placeholder={placeholder}
-      className={className}
-      triggerClassName={(hasValue) =>
-        `flex items-center justify-between w-full h-14 border-b-2 ${hasValue ? 'border-primary' : 'border-grayscale-100'} focus:border-primary focus:outline-none transition-colors`
-      }
-      valueClassName="text-xl text-grayscale-900"
-      placeholderClassName="text-xl text-grayscale-300"
-      dropdownClassName="mt-3 w-full max-h-[200px] overflow-y-auto bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)]"
-      optionClassName="w-full flex items-center px-4 py-3 text-sm font-medium text-grayscale-500 hover:bg-grayscale-50 transition-colors"
-    />
+    <Select value={value || null} onChange={(v) => onChange(v ?? '')} className={className}>
+      <Select.Trigger
+        className={`flex items-center justify-between w-full h-14 border-b-2 ${
+          value ? 'border-primary' : 'border-grayscale-100'
+        } focus:border-primary focus:outline-none transition-colors`}
+      >
+        <span className={value ? 'text-xl text-grayscale-900' : 'text-xl text-grayscale-300'}>
+          {value || placeholder}
+        </span>
+        <Select.Chevron />
+      </Select.Trigger>
+      <Select.Content className="mt-3 w-full max-h-[200px] overflow-y-auto bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)]">
+        {options.map((option) => (
+          <Select.Item
+            key={option}
+            value={option}
+            className="w-full flex items-center px-4 py-3 text-sm font-medium text-grayscale-500 hover:bg-grayscale-50 transition-colors"
+          >
+            {option}
+          </Select.Item>
+        ))}
+      </Select.Content>
+    </Select>
   );
 }
 
