@@ -5,8 +5,20 @@ import FunnelHeader from './FunnelHeader';
 import TextField from '@/components/ui/TextField';
 import Button from '@/components/ui/Button';
 import { InfoIcon } from '@/components/icons';
+import { gql } from '@/gql';
+import { createBrowserClient } from '@/lib/graphql/client';
+import { toast } from 'sonner';
 
 const CREDENTIALS_REGEX = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,16}$/;
+
+const LoginIdAvailabilityDoc = gql(`
+  query LoginIdAvailability($loginId: String!) {
+    loginIdAvailability(loginId: $loginId) {
+      loginId
+      available
+    }
+  }
+`);
 
 interface CredentialsStepProps {
   defaultValues: { loginId: string; password: string };
@@ -17,8 +29,27 @@ interface CredentialsStepProps {
 export default function CredentialsStep({ defaultValues, onNext, onBack }: CredentialsStepProps) {
   const [loginId, setLoginId] = useState(defaultValues.loginId);
   const [password, setPassword] = useState(defaultValues.password);
+  const [loginIdError, setLoginIdError] = useState(false);
+  const [isChecking, setIsChecking] = useState(false);
 
   const isValid = CREDENTIALS_REGEX.test(loginId) && CREDENTIALS_REGEX.test(password);
+
+  const handleNext = async () => {
+    setIsChecking(true);
+    try {
+      const result = await createBrowserClient().request(LoginIdAvailabilityDoc, { loginId });
+      if (!result.loginIdAvailability.available) {
+        toast.error('이미 사용 중인 아이디입니다.');
+        setLoginIdError(true);
+        return;
+      }
+      onNext({ loginId, password });
+    } catch {
+      toast.error('아이디 중복 확인 중 오류가 발생했습니다.');
+    } finally {
+      setIsChecking(false);
+    }
+  };
 
   return (
     <div className="flex flex-col min-h-dvh">
@@ -29,15 +60,21 @@ export default function CredentialsStep({ defaultValues, onNext, onBack }: Crede
         </h1>
         <div className="mt-9 flex flex-col gap-4">
           <div className="flex flex-col gap-6">
-            <TextField
-              label="아이디"
-              id="loginId"
-              name="loginId"
-              type="text"
-              placeholder="아이디"
-              value={loginId}
-              onChange={(e) => setLoginId(e.target.value)}
-            />
+            <div className="flex flex-col gap-1 w-full">
+              <TextField.Label htmlFor="loginId">아이디</TextField.Label>
+              <TextField.Input
+                id="loginId"
+                name="loginId"
+                type="text"
+                placeholder="아이디"
+                value={loginId}
+                onChange={(e) => {
+                  setLoginId(e.target.value);
+                  setLoginIdError(false);
+                }}
+                error={loginIdError}
+              />
+            </div>
             <TextField
               label="비밀번호"
               id="password"
@@ -61,7 +98,7 @@ export default function CredentialsStep({ defaultValues, onNext, onBack }: Crede
         </div>
       </div>
       <div className="p-4">
-        <Button type="button" disabled={!isValid} onClick={() => onNext({ loginId, password })}>
+        <Button type="button" disabled={!isValid || isChecking} onClick={handleNext}>
           다음
         </Button>
       </div>
