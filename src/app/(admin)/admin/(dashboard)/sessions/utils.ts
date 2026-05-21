@@ -1,9 +1,9 @@
-import { formatDate } from '@/lib/date';
+import { formatDateWithDay } from '@/lib/date';
 
 export const formatSessionTime = (
   sessionDate: string,
   startTime: string,
   endTime: string
 ) => {
-  return `${formatDate(sessionDate)} ${startTime}~${endTime}`;
+  return `${formatDateWithDay(sessionDate)} ${startTime}~${endTime}`;
 };

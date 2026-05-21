@@ -14,3 +14,5 @@ export { default as CheckIcon } from './CheckIcon';
 export { default as WarnCircleIcon } from './WarnCircleIcon';
 export { default as XIcon } from './XIcon';
 export { default as TriangleAlertIcon } from './TriangleAlertIcon';
+export { default as ClockIcon } from './ClockIcon';
+export { default as PinIcon } from './PinIcon';

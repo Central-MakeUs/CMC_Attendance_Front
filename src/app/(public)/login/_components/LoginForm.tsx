@@ -17,6 +17,9 @@ const LoginMutation = gql(`
       accessTokenExpiresAt
       refreshTokenExpiresAt
       role
+      generation {
+        number
+      }
     }
   }
 `);
