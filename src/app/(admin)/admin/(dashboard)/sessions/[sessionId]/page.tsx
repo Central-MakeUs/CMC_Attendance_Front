@@ -2,17 +2,15 @@ import { redirect } from 'next/navigation';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
-import AttendanceTableView, { AttendanceRecord } from './_components/AttendanceTableView';
+import AttendanceTableView, {
+  AttendanceRecord,
+} from './_components/AttendanceTableView';
 import SessionHeader from './_components/SessionHeader';
 
 const SessionsDocument = gql(`
-  query Sessions($generationNumber: Int!) {
+  query SessionsForDetail($generationNumber: Int!) {
     sessions(generationNumber: $generationNumber) {
       id
-      generation {
-        id
-        number
-      }
       sessionName
       description
       placeName
@@ -20,8 +18,6 @@ const SessionsDocument = gql(`
       sessionDate
       startTime
       endTime
-      attendanceStartTime
-      attendanceEndTime
       createdBy
       updatedBy
       createdAt
@@ -107,7 +103,10 @@ interface Props {
   searchParams: Promise<{ generationNumber?: string }>;
 }
 
-export default async function SessionDetailPage({ params, searchParams }: Props) {
+export default async function SessionDetailPage({
+  params,
+  searchParams,
+}: Props) {
   const { sessionId } = await params;
   const { generationNumber } = await searchParams;
 

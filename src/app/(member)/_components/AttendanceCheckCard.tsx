@@ -9,8 +9,8 @@ type Session = {
   id: string;
   sessionName: string;
   sessionDate: string;
-  attendanceStartTime: string;
-  attendanceEndTime: string;
+  startTime: string;
+  endTime: string;
 };
 
 function formatSessionLabel(session: Session) {
@@ -23,8 +23,8 @@ function isAttendanceOpen(session: Session) {
   const today = now.toISOString().slice(0, 10);
   if (today !== session.sessionDate) return false;
 
-  const [sh, sm] = session.attendanceStartTime.split(':').map(Number);
-  const [eh, em] = session.attendanceEndTime.split(':').map(Number);
+  const [sh, sm] = session.startTime.split(':').map(Number);
+  const [eh, em] = session.endTime.split(':').map(Number);
   const nowMinutes = now.getHours() * 60 + now.getMinutes();
   return nowMinutes >= sh * 60 + sm && nowMinutes <= eh * 60 + em;
 }

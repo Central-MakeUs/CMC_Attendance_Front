@@ -9,19 +9,15 @@ const SessionsQuery = gql(`
   query Sessions($generationNumber: Int!) {
     sessions(generationNumber: $generationNumber) {
       id
-      generation {
-        id
-        number
-      }
       sessionName
       description
+      targetParts
       placeName
-      attendanceStatus
+      placeDetail
       sessionDate
       startTime
       endTime
-      attendanceStartTime
-      attendanceEndTime
+      attendanceStatus
       createdBy
       updatedBy
       createdAt
@@ -36,13 +32,18 @@ interface Props {
 
 async function getSessions(generationNumber: number) {
   const accessToken = await getAccessToken();
+  console.log(generationNumber);
 
   if (!accessToken) return [];
 
   try {
-    const data = await gqlClient.request(SessionsQuery, { generationNumber }, {
-      Authorization: `Bearer ${accessToken}`,
-    });
+    const data = await gqlClient.request(
+      SessionsQuery,
+      { generationNumber },
+      {
+        Authorization: `Bearer ${accessToken}`,
+      }
+    );
     return data.sessions;
   } catch {
     return [];
@@ -55,6 +56,7 @@ export default async function SessionsPage({ searchParams }: Props) {
   if (!generationNumber) redirect('/admin');
 
   const sessions = await getSessions(Number(generationNumber));
+  console.log(sessions);
 
   return (
     <div className="flex flex-col h-full p-6 gap-6 overflow-y-auto">

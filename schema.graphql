@@ -67,14 +67,14 @@ type Session {
   generation: GenerationSummary!
   sessionName: String!
   description: String
+  targetParts: [Part!]!
   placeName: String!
+  placeDetail: String!
   latitude: Float!
   longitude: Float!
   sessionDate: String!
   startTime: String!
   endTime: String!
-  attendanceStartTime: String!
-  attendanceEndTime: String!
   attendanceStatus: AttendanceStatus
   createdBy: String!
   updatedBy: String!
@@ -160,14 +160,14 @@ input CreateSessionInput {
   generationNumber: Int!
   sessionName: String!
   description: String
+  targetParts: [Part!]!
   placeName: String!
+  placeDetail: String!
   latitude: Float!
   longitude: Float!
   sessionDate: String!
   startTime: String!
   endTime: String!
-  attendanceStartTime: String!
-  attendanceEndTime: String!
 }
 
 input UpdateSessionInput {
@@ -175,13 +175,12 @@ input UpdateSessionInput {
   sessionName: String!
   description: String
   placeName: String!
+  placeDetail: String!
   latitude: Float!
   longitude: Float!
   sessionDate: String!
   startTime: String!
   endTime: String!
-  attendanceStartTime: String!
-  attendanceEndTime: String!
 }
 
 input DeleteSessionInput {

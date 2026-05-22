@@ -17,8 +17,6 @@ export interface SessionFormData {
   day: string;
   startTime: string;
   endTime: string;
-  attendanceStartTime: string;
-  attendanceEndTime: string;
   description: string;
 }
 
@@ -67,8 +65,6 @@ export default function SessionFormModal({
         day,
         startTime: parseTime(session.startTime),
         endTime: parseTime(session.endTime),
-        attendanceStartTime: parseTime(session.attendanceStartTime),
-        attendanceEndTime: parseTime(session.attendanceEndTime),
         description: session.description ?? '',
       };
     }
@@ -80,8 +76,6 @@ export default function SessionFormModal({
       day: '',
       startTime: '',
       endTime: '',
-      attendanceStartTime: '',
-      attendanceEndTime: '',
       description: '',
     };
   });
@@ -179,29 +173,6 @@ export default function SessionFormModal({
                 options={TIME_OPTIONS}
                 value={form.endTime}
                 onChange={set('endTime')}
-                placeholder="16:00"
-                className="flex-1 min-w-0"
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col gap-1 w-full">
-            <SelectField.Label className="text-base leading-normal">
-              출석 가능 시간
-            </SelectField.Label>
-            <div className="flex items-center gap-3">
-              <SelectField.Input
-                options={TIME_OPTIONS}
-                value={form.attendanceStartTime}
-                onChange={set('attendanceStartTime')}
-                placeholder="10:00"
-                className="flex-1 min-w-0"
-              />
-              <div className="w-3 h-px bg-grayscale-300 shrink-0" />
-              <SelectField.Input
-                options={TIME_OPTIONS}
-                value={form.attendanceEndTime}
-                onChange={set('attendanceEndTime')}
                 placeholder="16:00"
                 className="flex-1 min-w-0"
               />

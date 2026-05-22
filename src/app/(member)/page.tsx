@@ -17,8 +17,6 @@ const SessionsQuery = gql(`
       sessionDate
       startTime
       endTime
-      attendanceStartTime
-      attendanceEndTime
     }
   }
 `);
