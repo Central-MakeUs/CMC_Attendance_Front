@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
+import { verifySession } from '@/lib/dal';
 import Sidebar from './_components/Sidebar';
 
 const GenerationsDocument = gql(`
@@ -35,12 +36,12 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const generations = await getGenerations();
+  const [generations, viewer] = await Promise.all([getGenerations(), verifySession()]);
 
   return (
     <div className="flex h-screen">
       <Suspense>
-        <Sidebar generations={generations} />
+        <Sidebar generations={generations} viewerRole={viewer?.role ?? null} />
       </Suspense>
       <main className="flex-1">{children}</main>
     </div>

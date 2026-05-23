@@ -7,7 +7,7 @@ import { useSearchParams, usePathname } from 'next/navigation';
 import { SessionsIcon, UsersIcon, MailIcon } from '@/components/icons';
 import Button from '@/components/ui/Button';
 import { gql } from '@/gql';
-import type { GenerationsQuery } from '@/gql/graphql';
+import type { GenerationsQuery, Role } from '@/gql/graphql';
 import { createBrowserClient } from '@/lib/graphql/client';
 import InviteCodeModal from './InviteCodeModal';
 
@@ -25,12 +25,13 @@ type Generation = GenerationsQuery['generations'][number];
 
 interface Props {
   generations: Generation[];
+  viewerRole: Role | null;
 }
 
 const MENU_ITEMS = [
-  { label: '세션 관리', path: '/admin/sessions', Icon: SessionsIcon },
-  { label: '챌린저 관리', path: '/admin/challengers', Icon: UsersIcon },
-  { label: '유저 관리', path: '/admin/users', Icon: UsersIcon },
+  { label: '세션 관리', path: '/admin/sessions', Icon: SessionsIcon, roles: null },
+  { label: '챌린저 관리', path: '/admin/challengers', Icon: UsersIcon, roles: null },
+  { label: '유저 관리', path: '/admin/users', Icon: UsersIcon, roles: ['ROOT'] as Role[] },
 ];
 
 function formatDate(dateStr: string | null) {
@@ -39,7 +40,7 @@ function formatDate(dateStr: string | null) {
   return `${year.slice(2)}.${month}.${day}`;
 }
 
-export default function Sidebar({ generations }: Props) {
+export default function Sidebar({ generations, viewerRole }: Props) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [invitationCode, setInvitationCode] = useState<string | null>(null);
   const searchParams = useSearchParams();
@@ -69,7 +70,7 @@ export default function Sidebar({ generations }: Props) {
 
       <div className="flex flex-col flex-1 justify-between p-4">
         <div className="flex flex-col gap-2">
-          {MENU_ITEMS.map(({ label, path, Icon }) => {
+          {MENU_ITEMS.filter(({ roles }) => !roles || (viewerRole && roles.includes(viewerRole))).map(({ label, path, Icon }) => {
             const isActive = pathname === path;
             return (
               <Link
