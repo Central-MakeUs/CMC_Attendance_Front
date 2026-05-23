@@ -6,6 +6,7 @@ import { formatDateWithDay } from '@/lib/date';
 import { PinIcon } from '@/components/icons';
 import AttendanceCheckCard from './_components/AttendanceCheckCard';
 import SessionAccordionItem from './_components/SessionAccordionItem';
+import LogoutButton from './_components/LogoutButton';
 
 const SessionsQuery = gql(`
   query MemberSessions($generationNumber: Int!) {
@@ -49,7 +50,7 @@ export default async function AttendancePage() {
   const [pinnedSession, ...otherSessions] = sessions;
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col min-h-dvh">
       <header className="flex items-center h-[54px] px-4 bg-white shrink-0">
         <div className="flex items-center gap-2">
           <div className="relative size-[22px]">
@@ -114,6 +115,9 @@ export default async function AttendancePage() {
           <SessionAccordionItem key={session.id} session={session} />
         ))}
       </section>
+      <div className="mt-auto sticky bottom-0 flex justify-center py-4 bg-white">
+        <LogoutButton />
+      </div>
     </div>
   );
 }
