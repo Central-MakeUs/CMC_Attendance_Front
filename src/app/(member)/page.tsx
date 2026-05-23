@@ -17,6 +17,7 @@ const SessionsQuery = gql(`
       sessionDate
       startTime
       endTime
+      attendanceStatus
     }
   }
 `);
@@ -30,9 +31,13 @@ async function getSessions() {
   if (!accessToken || !generationNumber) return [];
 
   try {
-    const data = await gqlClient.request(SessionsQuery, { generationNumber }, {
-      Authorization: `Bearer ${accessToken}`,
-    });
+    const data = await gqlClient.request(
+      SessionsQuery,
+      { generationNumber },
+      {
+        Authorization: `Bearer ${accessToken}`,
+      }
+    );
     return data.sessions;
   } catch {
     return [];
@@ -55,10 +60,7 @@ export default async function AttendancePage() {
           </span>
         </div>
       </header>
-      <section className="px-4 pt-6 pb-8 flex flex-col gap-4">
-        <h2 className="text-[22px] font-bold text-grayscale-900 leading-normal">
-          출석 체크를 해주세요
-        </h2>
+      <section className="px-4 pt-6 pb-8">
         <AttendanceCheckCard sessions={sessions} />
       </section>
       <div className="h-1.5 bg-grayscale-50 shrink-0" />
