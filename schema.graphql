@@ -5,6 +5,8 @@ type Query {
   parts: [Part!]!
   generations: [GenerationOption!]!
   generationInvitationCode(generationNumber: Int!): GenerationInvitationCode!
+  users(name: String, page: Int!, size: Int!): UserPage!
+  challengers(generationNumber: Int!, part: String, name: String, page: Int!, size: Int!): ChallengerPage!
   sessions(generationNumber: Int!): [Session!]!
   sessionAttendances(
     sessionId: ID!
@@ -21,6 +23,9 @@ type Mutation {
   createSession(input: CreateSessionInput!): Session!
   updateSession(input: UpdateSessionInput!): Session!
   deleteSession(input: DeleteSessionInput!): DeleteSessionPayload!
+  updateUserRole(input: UpdateUserRoleInput!): ManagedUser!
+  updateUserGeneration(input: UpdateUserGenerationInput!): ManagedUser!
+  updateChallengerRemark(input: UpdateChallengerRemarkInput!): ChallengerRemark!
   updateSessionAttendanceStatus(input: UpdateSessionAttendanceStatusInput!): SessionAttendance!
   updateSessionAttendanceNote(input: UpdateSessionAttendanceNoteInput!): SessionAttendance!
   requestAttendance(input: RequestAttendanceInput!): SessionAttendance!
@@ -60,6 +65,43 @@ type GenerationInvitationCode {
   id: ID!
   number: Int!
   invitationCode: String!
+}
+
+type ManagedUser {
+  loginId: String!
+  name: String!
+  nickname: String!
+  role: Role!
+  generation: GenerationSummary
+}
+
+type UserPage {
+  items: [ManagedUser!]!
+  pageInfo: PageInfo!
+}
+
+type Challenger {
+  name: String!
+  nickname: String!
+  loginId: String!
+  part: Part!
+  team: String
+  attendanceScore: Float!
+  remark: String
+}
+
+type ChallengerPage {
+  items: [Challenger!]!
+  pageInfo: PageInfo!
+}
+
+type ChallengerRemark {
+  loginId: String!
+  name: String!
+  nickname: String!
+  remark: String
+  updatedAt: String!
+  updatedBy: String!
 }
 
 type Session {
@@ -187,6 +229,21 @@ input DeleteSessionInput {
   sessionId: ID!
 }
 
+input UpdateUserRoleInput {
+  loginId: String!
+  role: UserChangeableRole!
+}
+
+input UpdateUserGenerationInput {
+  loginId: String!
+  generationNumber: Int!
+}
+
+input UpdateChallengerRemarkInput {
+  loginId: String!
+  remark: String
+}
+
 input UpdateSessionAttendanceStatusInput {
   sessionId: ID!
   loginId: String!
@@ -235,6 +292,11 @@ enum Part {
 
 enum Role {
   ROOT
+  LEAD
+  CHALLENGER
+}
+
+enum UserChangeableRole {
   LEAD
   CHALLENGER
 }
