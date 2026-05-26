@@ -18,12 +18,16 @@ export default function SearchBar({
   return (
     <div className="flex items-center gap-2 flex-1">
       <div className="flex items-center gap-1 flex-1 h-10 px-3 py-2 bg-white border border-grayscale-100 rounded-xl">
-        <span className="shrink-0"><SearchIcon /></span>
+        <span className="shrink-0">
+          <SearchIcon className="text-grayscale-300" />
+        </span>
         <input
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onKeyDown={(e) => { if (e.key === 'Enter') onSearch(); }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') onSearch();
+          }}
           placeholder={placeholder}
           className="flex-1 min-w-0 text-sm text-grayscale-900 placeholder:text-[#989bb3] focus:outline-none bg-transparent"
         />

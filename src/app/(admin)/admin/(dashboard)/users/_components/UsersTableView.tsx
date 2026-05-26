@@ -7,6 +7,7 @@ import SearchBar from '@/components/ui/SearchBar';
 import Pagination from '@/components/ui/Pagination';
 import Select from '@/components/ui/Select';
 import { createBrowserClient } from '@/lib/graphql/client';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 import type { Role } from '@/gql/graphql';
 
 const UsersDocument = gql(`
@@ -167,48 +168,6 @@ function GenerationSelect({
   );
 }
 
-interface DeleteConfirmModalProps {
-  onConfirm: () => void;
-  onCancel: () => void;
-}
-
-function DeleteConfirmModal({ onConfirm, onCancel }: DeleteConfirmModalProps) {
-  return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
-      onClick={onCancel}
-    >
-      <div
-        className="bg-white rounded-2xl shadow-[0px_4px_14px_0px_rgba(0,0,0,0.1),0px_1px_2px_0px_rgba(0,0,0,0.05)] w-full max-w-[340px] overflow-hidden mx-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex flex-col gap-4 p-5">
-          <div className="flex flex-col gap-1.5">
-            <p className="text-grayscale-900 text-[20px] font-bold leading-normal">
-              해당 유저를 삭제할까요?
-            </p>
-          </div>
-        </div>
-        <div className="flex gap-2 px-5 pb-5">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="flex-1 h-12 py-2 text-base font-semibold rounded-xl bg-grayscale-50 text-grayscale-700 transition-colors hover:bg-grayscale-100"
-          >
-            취소
-          </button>
-          <button
-            type="button"
-            onClick={onConfirm}
-            className="flex-1 h-12 py-2 text-base font-semibold rounded-xl bg-primary text-white transition-colors hover:bg-primary/90"
-          >
-            삭제
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 function TrashIcon() {
   return (
@@ -428,7 +387,9 @@ export default function UsersTableView() {
       </div>
 
       {deleteTarget && (
-        <DeleteConfirmModal
+        <ConfirmModal
+          message="해당 유저를 삭제할까요?"
+          confirmLabel="삭제"
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteTarget(null)}
         />

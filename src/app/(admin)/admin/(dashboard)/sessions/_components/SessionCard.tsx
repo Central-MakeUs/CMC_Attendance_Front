@@ -2,10 +2,30 @@
 
 import { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { gql } from '@/gql';
+import { createBrowserClient } from '@/lib/graphql/client';
 import { formatSessionTime } from '../utils';
 import { ChevronRightIcon, MoreVerticalIcon } from '@/components/icons';
 import SessionFormModal, { type SessionFormData } from './SessionFormModal';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 import type { SessionsQuery } from '@/gql/graphql';
+
+const UpdateSessionMutation = gql(`
+  mutation UpdateSession($input: UpdateSessionInput!) {
+    updateSession(input: $input) {
+      id
+    }
+  }
+`);
+
+const DeleteSessionMutation = gql(`
+  mutation DeleteSession($input: DeleteSessionInput!) {
+    deleteSession(input: $input) {
+      deletedSessionId
+    }
+  }
+`);
 
 type Session = SessionsQuery['sessions'][number];
 
@@ -17,7 +37,10 @@ interface Props {
 export default function SessionCard({ session, generationNumber }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -25,8 +48,8 @@ export default function SessionCard({ session, generationNumber }: Props) {
         setIsMenuOpen(false);
       }
     }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleEditClick = () => {
@@ -34,8 +57,41 @@ export default function SessionCard({ session, generationNumber }: Props) {
     setIsEditModalOpen(true);
   };
 
-  const handleSubmit = (_data: SessionFormData) => {
-    setIsEditModalOpen(false);
+  const handleSubmit = async (data: SessionFormData) => {
+    setIsLoading(true);
+    try {
+      const client = createBrowserClient();
+      await client.request(UpdateSessionMutation, {
+        input: {
+          sessionId: session.id,
+          sessionName: data.sessionName,
+          description: data.description || null,
+          placeName: data.placeName,
+          placeDetail: data.placeDetail,
+          latitude: data.latitude,
+          longitude: data.longitude,
+          sessionDate: `${data.year}-${data.month}-${data.day}`,
+          startTime: data.startTime,
+          endTime: data.endTime,
+        },
+      });
+      setIsEditModalOpen(false);
+      router.refresh();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleDeleteClick = () => {
+    setIsMenuOpen(false);
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleteModalOpen(false);
+    const client = createBrowserClient();
+    await client.request(DeleteSessionMutation, { input: { sessionId: session.id } });
+    router.refresh();
   };
 
   return (
@@ -69,7 +125,10 @@ export default function SessionCard({ session, generationNumber }: Props) {
                 >
                   수정
                 </button>
-                <button className="w-full text-left px-4 py-3 text-[14px] font-medium text-grayscale-500 hover:bg-grayscale-50 transition-colors">
+                <button
+                  className="w-full text-left px-4 py-3 text-[14px] font-medium text-red-400 hover:bg-grayscale-50 transition-colors"
+                  onClick={handleDeleteClick}
+                >
                   삭제
                 </button>
               </div>
@@ -109,6 +168,15 @@ export default function SessionCard({ session, generationNumber }: Props) {
           session={session}
           onClose={() => setIsEditModalOpen(false)}
           onSubmit={handleSubmit}
+          isLoading={isLoading}
+        />
+      )}
+      {isDeleteModalOpen && (
+        <ConfirmModal
+          message="세션을 삭제할까요?"
+          confirmLabel="삭제"
+          onConfirm={handleDeleteConfirm}
+          onCancel={() => setIsDeleteModalOpen(false)}
         />
       )}
     </>

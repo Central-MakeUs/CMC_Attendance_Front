@@ -22,6 +22,9 @@ type Documents = {
     "\n  mutation UpdateSessionAttendanceStatus($input: UpdateSessionAttendanceStatusInput!) {\n    updateSessionAttendanceStatus(input: $input) {\n      attendanceStatus\n    }\n  }\n": typeof types.UpdateSessionAttendanceStatusDocument,
     "\n  mutation UpdateSessionAttendanceNote($input: UpdateSessionAttendanceNoteInput!) {\n    updateSessionAttendanceNote(input: $input) {\n      note\n    }\n  }\n": typeof types.UpdateSessionAttendanceNoteDocument,
     "\n  query SessionsForDetail($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.SessionsForDetailDocument,
+    "\n  mutation CreateSession($input: CreateSessionInput!) {\n    createSession(input: $input) {\n      id\n    }\n  }\n": typeof types.CreateSessionDocument,
+    "\n  mutation UpdateSession($input: UpdateSessionInput!) {\n    updateSession(input: $input) {\n      id\n    }\n  }\n": typeof types.UpdateSessionDocument,
+    "\n  mutation DeleteSession($input: DeleteSessionInput!) {\n    deleteSession(input: $input) {\n      deletedSessionId\n    }\n  }\n": typeof types.DeleteSessionDocument,
     "\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      targetParts\n      placeName\n      placeDetail\n      sessionDate\n      startTime\n      endTime\n      attendanceStatus\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": typeof types.SessionsDocument,
     "\n  query Users($name: String, $page: Int!, $size: Int!) {\n    users(name: $name, page: $page, size: $size) {\n      items {\n        loginId\n        name\n        nickname\n        role\n        generation {\n          number\n        }\n      }\n      pageInfo {\n        page\n        size\n        totalElements\n        totalPages\n        hasNext\n        hasPrevious\n      }\n    }\n  }\n": typeof types.UsersDocument,
     "\n  query GenerationsForUsers {\n    generations {\n      id\n      number\n    }\n  }\n": typeof types.GenerationsForUsersDocument,
@@ -46,6 +49,9 @@ const documents: Documents = {
     "\n  mutation UpdateSessionAttendanceStatus($input: UpdateSessionAttendanceStatusInput!) {\n    updateSessionAttendanceStatus(input: $input) {\n      attendanceStatus\n    }\n  }\n": types.UpdateSessionAttendanceStatusDocument,
     "\n  mutation UpdateSessionAttendanceNote($input: UpdateSessionAttendanceNoteInput!) {\n    updateSessionAttendanceNote(input: $input) {\n      note\n    }\n  }\n": types.UpdateSessionAttendanceNoteDocument,
     "\n  query SessionsForDetail($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": types.SessionsForDetailDocument,
+    "\n  mutation CreateSession($input: CreateSessionInput!) {\n    createSession(input: $input) {\n      id\n    }\n  }\n": types.CreateSessionDocument,
+    "\n  mutation UpdateSession($input: UpdateSessionInput!) {\n    updateSession(input: $input) {\n      id\n    }\n  }\n": types.UpdateSessionDocument,
+    "\n  mutation DeleteSession($input: DeleteSessionInput!) {\n    deleteSession(input: $input) {\n      deletedSessionId\n    }\n  }\n": types.DeleteSessionDocument,
     "\n  query Sessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      targetParts\n      placeName\n      placeDetail\n      sessionDate\n      startTime\n      endTime\n      attendanceStatus\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n": types.SessionsDocument,
     "\n  query Users($name: String, $page: Int!, $size: Int!) {\n    users(name: $name, page: $page, size: $size) {\n      items {\n        loginId\n        name\n        nickname\n        role\n        generation {\n          number\n        }\n      }\n      pageInfo {\n        page\n        size\n        totalElements\n        totalPages\n        hasNext\n        hasPrevious\n      }\n    }\n  }\n": types.UsersDocument,
     "\n  query GenerationsForUsers {\n    generations {\n      id\n      number\n    }\n  }\n": types.GenerationsForUsersDocument,
@@ -108,6 +114,18 @@ export function gql(source: "\n  mutation UpdateSessionAttendanceNote($input: Up
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query SessionsForDetail($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n"): (typeof documents)["\n  query SessionsForDetail($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      placeName\n      attendanceStatus\n      sessionDate\n      startTime\n      endTime\n      createdBy\n      updatedBy\n      createdAt\n      updatedAt\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation CreateSession($input: CreateSessionInput!) {\n    createSession(input: $input) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation CreateSession($input: CreateSessionInput!) {\n    createSession(input: $input) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation UpdateSession($input: UpdateSessionInput!) {\n    updateSession(input: $input) {\n      id\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateSession($input: UpdateSessionInput!) {\n    updateSession(input: $input) {\n      id\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation DeleteSession($input: DeleteSessionInput!) {\n    deleteSession(input: $input) {\n      deletedSessionId\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteSession($input: DeleteSessionInput!) {\n    deleteSession(input: $input) {\n      deletedSessionId\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

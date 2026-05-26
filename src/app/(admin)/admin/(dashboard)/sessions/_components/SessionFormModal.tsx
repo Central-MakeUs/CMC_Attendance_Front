@@ -4,20 +4,43 @@ import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import TextField from '@/components/ui/TextField';
 import SelectField from '@/components/ui/SelectField';
-import { SearchIcon } from '@/components/icons';
-import type { SessionsQuery } from '@/gql/graphql';
+import PlaceSearchInput from './PlaceSearchInput';
+import type { Part, SessionsQuery } from '@/gql/graphql';
 
 type Session = SessionsQuery['sessions'][number];
+
+const PARTS: Part[] = [
+  'PM',
+  'Designer',
+  'Web',
+  'iOS',
+  'Android',
+  'Server',
+  'Flutter',
+];
+const PART_LABELS: Record<Part, string> = {
+  PM: 'PM',
+  Designer: 'Design',
+  Web: 'Web',
+  iOS: 'iOS',
+  Android: 'Android',
+  Server: 'Server',
+  Flutter: 'Flutter',
+};
 
 export interface SessionFormData {
   sessionName: string;
   placeName: string;
+  placeDetail: string;
+  latitude: number;
+  longitude: number;
   year: string;
   month: string;
   day: string;
   startTime: string;
   endTime: string;
   description: string;
+  targetParts: Part[];
 }
 
 interface Props {
@@ -25,6 +48,7 @@ interface Props {
   session?: Session;
   onClose: () => void;
   onSubmit: (data: SessionFormData) => void;
+  isLoading?: boolean;
 }
 
 const TIME_OPTIONS = Array.from({ length: 48 }, (_, i) => {
@@ -53,6 +77,7 @@ export default function SessionFormModal({
   session,
   onClose,
   onSubmit,
+  isLoading = false,
 }: Props) {
   const [form, setForm] = useState<SessionFormData>(() => {
     if (mode === 'edit' && session) {
@@ -60,25 +85,61 @@ export default function SessionFormModal({
       return {
         sessionName: session.sessionName,
         placeName: session.placeName,
+        placeDetail: session.placeDetail ?? '',
+        latitude: 0,
+        longitude: 0,
         year,
         month,
         day,
         startTime: parseTime(session.startTime),
         endTime: parseTime(session.endTime),
         description: session.description ?? '',
+        targetParts: session.targetParts ?? [],
       };
     }
     return {
       sessionName: '',
       placeName: '',
+      placeDetail: '',
+      latitude: 0,
+      longitude: 0,
       year: '',
       month: '',
       day: '',
       startTime: '',
       endTime: '',
       description: '',
+      targetParts: [...PARTS],
     };
   });
+
+  const [isAllSelected, setIsAllSelected] = useState(
+    () => mode !== 'edit' || !session?.targetParts?.length
+  );
+
+  function toggleAll() {
+    setIsAllSelected(true);
+    setForm((prev) => ({ ...prev, targetParts: [...PARTS] }));
+  }
+
+  function togglePart(part: Part) {
+    if (isAllSelected) {
+      setIsAllSelected(false);
+      setForm((prev) => ({ ...prev, targetParts: [part] }));
+      return;
+    }
+    setForm((prev) => {
+      const has = prev.targetParts.includes(part);
+      const next = has
+        ? prev.targetParts.filter((p) => p !== part)
+        : [...prev.targetParts, part];
+      if (next.length === 0) {
+        setIsAllSelected(true);
+        return { ...prev, targetParts: [...PARTS] };
+      }
+      return { ...prev, targetParts: next };
+    });
+  }
 
   const set = (key: keyof SessionFormData) => (value: string) =>
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -109,17 +170,64 @@ export default function SessionFormModal({
               placeholder="세션명"
             />
           </div>
+          <div className="flex flex-col gap-3 w-full">
+            <TextField.Label className="text-base leading-normal">
+              파트
+            </TextField.Label>
+            <div className="flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={toggleAll}
+                className={`px-4 py-2 rounded-full text-[15px] font-semibold transition-colors ${
+                  isAllSelected
+                    ? 'bg-primary-light text-primary'
+                    : 'bg-grayscale-50 text-grayscale-700 font-medium'
+                }`}
+              >
+                전체
+              </button>
+              {PARTS.map((part) => {
+                const selected =
+                  !isAllSelected && form.targetParts.includes(part);
+                return (
+                  <button
+                    key={part}
+                    type="button"
+                    onClick={() => togglePart(part)}
+                    className={`px-4 py-2 rounded-full text-[15px] transition-colors ${
+                      selected
+                        ? 'bg-primary-light text-primary font-semibold'
+                        : 'bg-grayscale-50 text-grayscale-700 font-medium'
+                    }`}
+                  >
+                    {PART_LABELS[part]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
 
           <div className="flex flex-col gap-1 w-full">
             <TextField.Label className="text-base leading-normal">
               장소
             </TextField.Label>
-            <TextField.Input
-              prefix={<SearchIcon />}
-              value={form.placeName}
-              onChange={(e) => set('placeName')(e.target.value)}
-              placeholder="장소 검색"
-            />
+            <div className="flex flex-col gap-3 w-full">
+              <PlaceSearchInput
+                value={form.placeName}
+                onChange={(value, coords) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    placeName: value,
+                    ...(coords ?? {}),
+                  }))
+                }
+              />
+              <TextField.Input
+                value={form.placeDetail}
+                onChange={(e) => set('placeDetail')(e.target.value)}
+                placeholder="(추가) 세부장소 입력"
+              />
+            </div>
           </div>
 
           <div className="flex flex-col gap-1 w-full">
@@ -201,8 +309,13 @@ export default function SessionFormModal({
           >
             취소
           </Button>
-          <Button size="sm" className="flex-1" onClick={() => onSubmit(form)}>
-            완료
+          <Button
+            size="sm"
+            className="flex-1"
+            onClick={() => onSubmit(form)}
+            disabled={isLoading}
+          >
+            {isLoading ? '저장 중...' : '완료'}
           </Button>
         </div>
       </div>

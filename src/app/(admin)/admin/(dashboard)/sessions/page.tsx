@@ -32,7 +32,6 @@ interface Props {
 
 async function getSessions(generationNumber: number) {
   const accessToken = await getAccessToken();
-  console.log(generationNumber);
 
   if (!accessToken) return [];
 
@@ -56,7 +55,6 @@ export default async function SessionsPage({ searchParams }: Props) {
   if (!generationNumber) redirect('/admin');
 
   const sessions = await getSessions(Number(generationNumber));
-  console.log(sessions);
 
   return (
     <div className="flex flex-col h-full p-6 gap-6 overflow-y-auto">
