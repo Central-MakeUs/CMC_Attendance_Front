@@ -28,6 +28,23 @@ const DeleteSessionMutation = gql(`
 
 type Session = SessionsForDetailQuery['sessions'][number];
 
+interface ActionButtonProps {
+  children: React.ReactNode;
+  onClick: () => void;
+}
+
+function ActionButton({ children, onClick }: ActionButtonProps) {
+  return (
+    <button
+      type="button"
+      className="flex items-center justify-center px-6 py-3 rounded-2xl bg-grayscale-50 text-lg font-semibold leading-[1.4] text-grayscale-700 hover:bg-grayscale-100 transition-colors"
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
 interface Props {
   session: Session;
   generationNumber: string;
@@ -80,20 +97,12 @@ export default function SessionActionButtons({
   return (
     <>
       <div className="flex items-center gap-2">
-        <button
-          type="button"
-          className="flex items-center justify-center px-6 py-3 rounded-2xl bg-grayscale-50 text-lg font-semibold leading-[1.4] text-grayscale-700 hover:bg-grayscale-100 transition-colors"
-          onClick={() => setIsEditModalOpen(true)}
-        >
+        <ActionButton onClick={() => setIsEditModalOpen(true)}>
           수정
-        </button>
-        <button
-          type="button"
-          className="flex items-center justify-center px-6 py-3 rounded-2xl bg-grayscale-50 text-lg font-semibold leading-[1.4] text-grayscale-700 hover:bg-grayscale-100 transition-colors"
-          onClick={() => setIsDeleteModalOpen(true)}
-        >
+        </ActionButton>
+        <ActionButton onClick={() => setIsDeleteModalOpen(true)}>
           삭제
-        </button>
+        </ActionButton>
       </div>
 
       {isEditModalOpen && (

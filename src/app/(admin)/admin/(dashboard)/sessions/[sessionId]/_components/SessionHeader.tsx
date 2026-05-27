@@ -26,9 +26,10 @@ function InfoItem({ label, value }: InfoItemProps) {
 interface SessionHeaderProps {
   session: Session;
   generationNumber: string;
+  isRoot: boolean;
 }
 
-export default function SessionHeader({ session, generationNumber }: SessionHeaderProps) {
+export default function SessionHeader({ session, generationNumber, isRoot }: SessionHeaderProps) {
   const {
     sessionName,
     sessionDate,
@@ -45,7 +46,7 @@ export default function SessionHeader({ session, generationNumber }: SessionHead
         <h1 className="font-bold text-2xl leading-normal text-grayscale-900">
           {sessionName}
         </h1>
-        <SessionActionButtons session={session} generationNumber={generationNumber} />
+        {isRoot && <SessionActionButtons session={session} generationNumber={generationNumber} />}
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-24">

@@ -32,9 +32,10 @@ type Session = SessionsQuery['sessions'][number];
 interface Props {
   session: Session;
   generationNumber: string;
+  isRoot: boolean;
 }
 
-export default function SessionCard({ session, generationNumber }: Props) {
+export default function SessionCard({ session, generationNumber, isRoot }: Props) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -113,30 +114,32 @@ export default function SessionCard({ session, generationNumber }: Props) {
               <ChevronRightIcon />
             </Link>
           </div>
-          <div className="relative" ref={menuRef}>
-            <button
-              onClick={() => setIsMenuOpen((prev) => !prev)}
-              className="p-0.5 rounded-lg hover:bg-grayscale-100 transition-colors"
-            >
-              <MoreVerticalIcon />
-            </button>
-            {isMenuOpen && (
-              <div className="absolute right-0 top-full mt-1 w-[140px] bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)] overflow-hidden z-10">
-                <button
-                  className="w-full text-left px-4 py-3 text-[14px] font-medium text-grayscale-500 hover:bg-grayscale-50 transition-colors"
-                  onClick={handleEditClick}
-                >
-                  수정
-                </button>
-                <button
-                  className="w-full text-left px-4 py-3 text-[14px] font-medium text-red-400 hover:bg-grayscale-50 transition-colors"
-                  onClick={handleDeleteClick}
-                >
-                  삭제
-                </button>
-              </div>
-            )}
-          </div>
+          {isRoot && (
+            <div className="relative" ref={menuRef}>
+              <button
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+                className="p-0.5 rounded-lg hover:bg-grayscale-100 transition-colors"
+              >
+                <MoreVerticalIcon />
+              </button>
+              {isMenuOpen && (
+                <div className="absolute right-0 top-full mt-1 w-[140px] bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)] overflow-hidden z-10">
+                  <button
+                    className="w-full text-left px-4 py-3 text-[14px] font-medium text-grayscale-500 hover:bg-grayscale-50 transition-colors"
+                    onClick={handleEditClick}
+                  >
+                    수정
+                  </button>
+                  <button
+                    className="w-full text-left px-4 py-3 text-[14px] font-medium text-red-400 hover:bg-grayscale-50 transition-colors"
+                    onClick={handleDeleteClick}
+                  >
+                    삭제
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="bg-white flex flex-col gap-3 p-3 rounded-xl">

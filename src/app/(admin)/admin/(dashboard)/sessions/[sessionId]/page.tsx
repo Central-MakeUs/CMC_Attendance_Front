@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
+import { verifySession } from '@/lib/dal';
 import AttendanceTableView, {
   AttendanceRecord,
 } from './_components/AttendanceTableView';
@@ -114,16 +115,17 @@ export default async function SessionDetailPage({
 
   if (!generationNumber) redirect('/admin');
 
-  const [session, { records, totalPages }] = await Promise.all([
+  const [session, { records, totalPages }, viewer] = await Promise.all([
     getSession(Number(generationNumber), sessionId),
     getInitialAttendances(sessionId),
+    verifySession(),
   ]);
 
   if (!session) redirect('/admin');
 
   return (
     <div className="flex flex-col h-full p-6 gap-6 overflow-y-auto">
-      <SessionHeader session={session} generationNumber={generationNumber} />
+      <SessionHeader session={session} generationNumber={generationNumber} isRoot={viewer?.role === 'ROOT'} />
       <AttendanceTableView
         sessionId={sessionId}
         initialRecords={records}

@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
+import { verifySession } from '@/lib/dal';
 import CreateSessionButton from './_components/CreateSessionButton';
 import SessionCard from './_components/SessionCard';
 
@@ -54,7 +55,11 @@ export default async function SessionsPage({ searchParams }: Props) {
 
   if (!generationNumber) redirect('/admin');
 
-  const sessions = await getSessions(Number(generationNumber));
+  const [sessions, viewer] = await Promise.all([
+    getSessions(Number(generationNumber)),
+    verifySession(),
+  ]);
+  const isRoot = viewer?.role === 'ROOT';
 
   return (
     <div className="flex flex-col h-full p-6 gap-6 overflow-y-auto">
@@ -71,6 +76,7 @@ export default async function SessionsPage({ searchParams }: Props) {
             key={session.id}
             session={session}
             generationNumber={generationNumber}
+            isRoot={isRoot}
           />
         ))}
       </div>
