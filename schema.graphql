@@ -216,6 +216,7 @@ input UpdateSessionInput {
   sessionId: ID!
   sessionName: String!
   description: String
+  targetParts: [Part!]!
   placeName: String!
   placeDetail: String!
   latitude: Float!

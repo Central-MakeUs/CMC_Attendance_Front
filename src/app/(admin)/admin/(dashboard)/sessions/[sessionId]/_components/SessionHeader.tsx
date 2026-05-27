@@ -1,13 +1,8 @@
-interface SessionInfo {
-  sessionName: string;
-  sessionDate: string;
-  startTime: string;
-  endTime: string;
-  placeName: string;
-  description: string | null;
-}
-
 import { formatSessionTime } from '../../utils';
+import type { SessionsForDetailQuery } from '@/gql/graphql';
+import SessionActionButtons from './SessionActionButtons';
+
+type Session = SessionsForDetailQuery['sessions'][number];
 
 interface InfoItemProps {
   label: string;
@@ -29,10 +24,11 @@ function InfoItem({ label, value }: InfoItemProps) {
 }
 
 interface SessionHeaderProps {
-  session: SessionInfo;
+  session: Session;
+  generationNumber: string;
 }
 
-export default function SessionHeader({ session }: SessionHeaderProps) {
+export default function SessionHeader({ session, generationNumber }: SessionHeaderProps) {
   const {
     sessionName,
     sessionDate,
@@ -49,20 +45,7 @@ export default function SessionHeader({ session }: SessionHeaderProps) {
         <h1 className="font-bold text-2xl leading-normal text-grayscale-900">
           {sessionName}
         </h1>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="flex items-center justify-center px-6 py-3 rounded-2xl bg-grayscale-50 text-lg font-semibold leading-[1.4] text-grayscale-700 hover:bg-grayscale-100 transition-colors"
-          >
-            수정
-          </button>
-          <button
-            type="button"
-            className="flex items-center justify-center px-6 py-3 rounded-2xl bg-grayscale-50 text-lg font-semibold leading-[1.4] text-grayscale-700 hover:bg-grayscale-100 transition-colors"
-          >
-            삭제
-          </button>
-        </div>
+        <SessionActionButtons session={session} generationNumber={generationNumber} />
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex items-center gap-24">

@@ -14,6 +14,8 @@ const SessionsDocument = gql(`
       sessionName
       description
       placeName
+      placeDetail
+      targetParts
       attendanceStatus
       sessionDate
       startTime
@@ -121,7 +123,7 @@ export default async function SessionDetailPage({
 
   return (
     <div className="flex flex-col h-full p-6 gap-6 overflow-y-auto">
-      <SessionHeader session={session} />
+      <SessionHeader session={session} generationNumber={generationNumber} />
       <AttendanceTableView
         sessionId={sessionId}
         initialRecords={records}

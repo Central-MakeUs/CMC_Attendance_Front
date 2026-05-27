@@ -68,6 +68,7 @@ export default function SessionCard({ session, generationNumber }: Props) {
           description: data.description || null,
           placeName: data.placeName,
           placeDetail: data.placeDetail,
+          targetParts: data.targetParts,
           latitude: data.latitude,
           longitude: data.longitude,
           sessionDate: `${data.year}-${data.month}-${data.day}`,
@@ -90,7 +91,9 @@ export default function SessionCard({ session, generationNumber }: Props) {
   const handleDeleteConfirm = async () => {
     setIsDeleteModalOpen(false);
     const client = createBrowserClient();
-    await client.request(DeleteSessionMutation, { input: { sessionId: session.id } });
+    await client.request(DeleteSessionMutation, {
+      input: { sessionId: session.id },
+    });
     router.refresh();
   };
 
@@ -143,7 +146,11 @@ export default function SessionCard({ session, generationNumber }: Props) {
                 시간
               </span>
               <span className="font-medium text-[16px] leading-normal text-grayscale-700 whitespace-nowrap">
-                {formatSessionTime(session.sessionDate, session.startTime, session.endTime)}
+                {formatSessionTime(
+                  session.sessionDate,
+                  session.startTime,
+                  session.endTime
+                )}
               </span>
             </div>
             <div className="flex items-center gap-3">
@@ -173,7 +180,7 @@ export default function SessionCard({ session, generationNumber }: Props) {
       )}
       {isDeleteModalOpen && (
         <ConfirmModal
-          message="세션을 삭제할까요?"
+          message="해당 세션을 삭제할까요?"
           confirmLabel="삭제"
           onConfirm={handleDeleteConfirm}
           onCancel={() => setIsDeleteModalOpen(false)}
