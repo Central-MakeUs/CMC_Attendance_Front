@@ -71,6 +71,15 @@ const UpdateUserGenerationDocument = gql(`
   }
 `);
 
+const DeleteUserDocument = gql(`
+  mutation DeleteUser($input: DeleteUserInput!) {
+    deleteUser(input: $input) {
+      deletedLoginId
+      deleted
+    }
+  }
+`);
+
 interface UserRecord {
   loginId: string;
   name: string;
@@ -301,13 +310,23 @@ export default function UsersTableView() {
     }
   };
 
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
-    // TODO: deleteUser mutation 연동
-    setRecords((prev) =>
-      prev.filter((r) => r.loginId !== deleteTarget.loginId)
-    );
+    const target = deleteTarget;
+    const prevRecords = records;
+
+    setRecords((prev) => prev.filter((r) => r.loginId !== target.loginId));
     setDeleteTarget(null);
+
+    try {
+      const client = createBrowserClient();
+      await client.request(DeleteUserDocument, {
+        input: { loginId: target.loginId },
+      });
+    } catch (error) {
+      console.error(error);
+      setRecords(prevRecords);
+    }
   };
 
   const columns: Column<UserRecord>[] = [

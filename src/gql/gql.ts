@@ -32,6 +32,7 @@ type Documents = {
     "\n  query GenerationsForUsers {\n    generations {\n      id\n      number\n    }\n  }\n": typeof types.GenerationsForUsersDocument,
     "\n  mutation UpdateUserRole($input: UpdateUserRoleInput!) {\n    updateUserRole(input: $input) {\n      loginId\n      name\n      nickname\n      role\n      generation {\n        number\n      }\n    }\n  }\n": typeof types.UpdateUserRoleDocument,
     "\n  mutation UpdateUserGeneration($input: UpdateUserGenerationInput!) {\n    updateUserGeneration(input: $input) {\n      loginId\n      name\n      nickname\n      role\n      generation {\n        number\n      }\n    }\n  }\n": typeof types.UpdateUserGenerationDocument,
+    "\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      deletedLoginId\n      deleted\n    }\n  }\n": typeof types.DeleteUserDocument,
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": typeof types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": typeof types.GenerationsDocument,
     "\n  mutation RequestAttendance($sessionId: ID!, $latitude: Float!, $longitude: Float!) {\n    requestAttendance(input: { sessionId: $sessionId, latitude: $latitude, longitude: $longitude }) {\n      attendanceStatus\n    }\n  }\n": typeof types.RequestAttendanceDocument,
@@ -61,6 +62,7 @@ const documents: Documents = {
     "\n  query GenerationsForUsers {\n    generations {\n      id\n      number\n    }\n  }\n": types.GenerationsForUsersDocument,
     "\n  mutation UpdateUserRole($input: UpdateUserRoleInput!) {\n    updateUserRole(input: $input) {\n      loginId\n      name\n      nickname\n      role\n      generation {\n        number\n      }\n    }\n  }\n": types.UpdateUserRoleDocument,
     "\n  mutation UpdateUserGeneration($input: UpdateUserGenerationInput!) {\n    updateUserGeneration(input: $input) {\n      loginId\n      name\n      nickname\n      role\n      generation {\n        number\n      }\n    }\n  }\n": types.UpdateUserGenerationDocument,
+    "\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      deletedLoginId\n      deleted\n    }\n  }\n": types.DeleteUserDocument,
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": types.GenerationsDocument,
     "\n  mutation RequestAttendance($sessionId: ID!, $latitude: Float!, $longitude: Float!) {\n    requestAttendance(input: { sessionId: $sessionId, latitude: $latitude, longitude: $longitude }) {\n      attendanceStatus\n    }\n  }\n": types.RequestAttendanceDocument,
@@ -158,6 +160,10 @@ export function gql(source: "\n  mutation UpdateUserRole($input: UpdateUserRoleI
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation UpdateUserGeneration($input: UpdateUserGenerationInput!) {\n    updateUserGeneration(input: $input) {\n      loginId\n      name\n      nickname\n      role\n      generation {\n        number\n      }\n    }\n  }\n"): (typeof documents)["\n  mutation UpdateUserGeneration($input: UpdateUserGenerationInput!) {\n    updateUserGeneration(input: $input) {\n      loginId\n      name\n      nickname\n      role\n      generation {\n        number\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      deletedLoginId\n      deleted\n    }\n  }\n"): (typeof documents)["\n  mutation DeleteUser($input: DeleteUserInput!) {\n    deleteUser(input: $input) {\n      deletedLoginId\n      deleted\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
