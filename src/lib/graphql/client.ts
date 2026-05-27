@@ -1,4 +1,5 @@
-import { GraphQLClient } from './core';
+import { GraphQLClient, ClientError } from './core';
+import { clearAuthTokens } from '@/lib/cookies/client';
 
 const getAccessToken = () => {
   const match = document.cookie.match(/(?:^|;\s*)access_token=([^;]+)/);
@@ -11,5 +12,19 @@ export const createBrowserClient = () => {
   if (token) {
     client.setHeader('Authorization', `Bearer ${token}`);
   }
+
+  const originalRequest = client.request.bind(client);
+  client.request = async (...args) => {
+    try {
+      return await originalRequest(...args);
+    } catch (e) {
+      if (e instanceof ClientError && e.response.status === 401) {
+        clearAuthTokens();
+        window.location.href = '/login';
+      }
+      throw e;
+    }
+  };
+
   return client;
 };

@@ -1,7 +1,10 @@
 import { cache } from 'react';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
+import { ClientError } from '@/lib/graphql/core';
 
 const ViewerQuery = gql(`
   query Viewer {
@@ -26,7 +29,14 @@ const fetchViewer = async () => {
       Authorization: `Bearer ${accessToken}`,
     });
     return viewer;
-  } catch {
+  } catch (e) {
+    if (e instanceof ClientError && e.response.status === 401) {
+      const cookieStore = await cookies();
+      cookieStore.delete('access_token');
+      cookieStore.delete('refresh_token');
+      cookieStore.delete('generation_number');
+      redirect('/login');
+    }
     return null;
   }
 };
