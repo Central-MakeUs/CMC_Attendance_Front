@@ -40,7 +40,7 @@ type Documents = {
     "\n  query LoginIdAvailability($loginId: String!) {\n    loginIdAvailability(loginId: $loginId) {\n      loginId\n      available\n    }\n  }\n": typeof types.LoginIdAvailabilityDocument,
     "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n    }\n  }\n": typeof types.SignUpDocument,
     "\n  query Parts {\n    parts\n  }\n": typeof types.PartsDocument,
-    "\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n    }\n  }\n": typeof types.ViewerDocument,
+    "\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n      generationNumber\n    }\n  }\n": typeof types.ViewerDocument,
 };
 const documents: Documents = {
     "\n  query GenerationInvitationCode($generationNumber: Int!) {\n    generationInvitationCode(generationNumber: $generationNumber) {\n      id\n      number\n      invitationCode\n    }\n  }\n": types.GenerationInvitationCodeDocument,
@@ -69,7 +69,7 @@ const documents: Documents = {
     "\n  query LoginIdAvailability($loginId: String!) {\n    loginIdAvailability(loginId: $loginId) {\n      loginId\n      available\n    }\n  }\n": types.LoginIdAvailabilityDocument,
     "\n  mutation SignUp($input: SignUpInput!) {\n    signUp(input: $input) {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n    }\n  }\n": types.SignUpDocument,
     "\n  query Parts {\n    parts\n  }\n": types.PartsDocument,
-    "\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n    }\n  }\n": types.ViewerDocument,
+    "\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n      generationNumber\n    }\n  }\n": types.ViewerDocument,
 };
 
 /**
@@ -193,7 +193,7 @@ export function gql(source: "\n  query Parts {\n    parts\n  }\n"): (typeof docu
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n    }\n  }\n"): (typeof documents)["\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n    }\n  }\n"];
+export function gql(source: "\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n      generationNumber\n    }\n  }\n"): (typeof documents)["\n  query Viewer {\n    viewer {\n      userId\n      loginId\n      name\n      nickname\n      part\n      role\n      generationNumber\n    }\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

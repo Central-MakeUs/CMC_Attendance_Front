@@ -15,6 +15,7 @@ const ViewerQuery = gql(`
       nickname
       part
       role
+      generationNumber
     }
   }
 `);

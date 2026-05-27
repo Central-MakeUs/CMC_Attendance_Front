@@ -25,6 +25,7 @@ type Mutation {
   deleteSession(input: DeleteSessionInput!): DeleteSessionPayload!
   updateUserRole(input: UpdateUserRoleInput!): ManagedUser!
   updateUserGeneration(input: UpdateUserGenerationInput!): ManagedUser!
+  deleteUser(input: DeleteUserInput!): DeleteUserPayload!
   updateChallengerRemark(input: UpdateChallengerRemarkInput!): ChallengerRemark!
   updateSessionAttendanceStatus(input: UpdateSessionAttendanceStatusInput!): SessionAttendance!
   updateSessionAttendanceNote(input: UpdateSessionAttendanceNoteInput!): SessionAttendance!
@@ -41,6 +42,7 @@ type Viewer {
   nickname: String!
   part: Part!
   role: Role!
+  generationNumber: Int
 }
 
 type LoginIdAvailability {
@@ -191,6 +193,11 @@ type DeleteSessionPayload {
   deleted: Boolean!
 }
 
+type DeleteUserPayload {
+  deletedLoginId: String!
+  deleted: Boolean!
+}
+
 input CreateGenerationInput {
   number: Int!
   invitationCode: String!
@@ -238,6 +245,10 @@ input UpdateUserRoleInput {
 input UpdateUserGenerationInput {
   loginId: String!
   generationNumber: Int!
+}
+
+input DeleteUserInput {
+  loginId: String!
 }
 
 input UpdateChallengerRemarkInput {

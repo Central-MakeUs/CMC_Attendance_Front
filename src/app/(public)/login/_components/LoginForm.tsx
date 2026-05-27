@@ -45,7 +45,12 @@ export default function LoginForm() {
       const { login } = await createBrowserClient().request(LoginMutation, {
         input: { loginId, password },
       });
-      setAuthTokens(login);
+      setAuthTokens({
+        accessToken: login.accessToken,
+        refreshToken: login.refreshToken,
+        accessTokenExpiresAt: login.accessTokenExpiresAt,
+        refreshTokenExpiresAt: login.refreshTokenExpiresAt,
+      });
       router.push('/');
     } catch (e) {
       if (e instanceof ClientError) setError(e.message);

@@ -1,7 +1,8 @@
 import Image from 'next/image';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
-import { getAccessToken, getGenerationNumber } from '@/lib/cookies/server';
+import { getAccessToken } from '@/lib/cookies/server';
+import { verifySession } from '@/lib/dal';
 import { formatDateWithDay } from '@/lib/date';
 import { PinIcon } from '@/components/icons';
 import AttendanceCheckCard from './_components/AttendanceCheckCard';
@@ -23,13 +24,10 @@ const SessionsQuery = gql(`
   }
 `);
 
-async function getSessions() {
-  const [accessToken, generationNumber] = await Promise.all([
-    getAccessToken(),
-    getGenerationNumber(),
-  ]);
+async function getSessions(generationNumber: number) {
+  const accessToken = await getAccessToken();
 
-  if (!accessToken || !generationNumber) return [];
+  if (!accessToken) return [];
 
   try {
     const data = await gqlClient.request(
@@ -46,7 +44,10 @@ async function getSessions() {
 }
 
 export default async function AttendancePage() {
-  const sessions = await getSessions();
+  const viewer = await verifySession();
+  const sessions = viewer?.generationNumber
+    ? await getSessions(viewer.generationNumber)
+    : [];
   const [pinnedSession, ...otherSessions] = sessions;
 
   return (
