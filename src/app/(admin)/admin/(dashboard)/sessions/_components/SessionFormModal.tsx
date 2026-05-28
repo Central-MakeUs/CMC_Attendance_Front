@@ -4,7 +4,6 @@ import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import TextField from '@/components/ui/TextField';
 import SelectField from '@/components/ui/SelectField';
-import PlaceSearchInput from './PlaceSearchInput';
 import type { Part, SessionsQuery } from '@/gql/graphql';
 
 type Session = SessionsQuery['sessions'][number];
@@ -86,8 +85,8 @@ export default function SessionFormModal({
         sessionName: session.sessionName,
         placeName: session.placeName,
         placeDetail: session.placeDetail ?? '',
-        latitude: 0,
-        longitude: 0,
+        latitude: session.latitude ?? 0,
+        longitude: session.longitude ?? 0,
         year,
         month,
         day,
@@ -99,7 +98,7 @@ export default function SessionFormModal({
     }
     return {
       sessionName: '',
-      placeName: '',
+      placeName: '임시',
       placeDetail: '',
       latitude: 0,
       longitude: 0,
@@ -112,6 +111,14 @@ export default function SessionFormModal({
       targetParts: [...PARTS],
     };
   });
+  console.log(form);
+
+  const [latStr, setLatStr] = useState(
+    form.latitude !== 0 ? String(form.latitude) : ''
+  );
+  const [lngStr, setLngStr] = useState(
+    form.longitude !== 0 ? String(form.longitude) : ''
+  );
 
   const [isAllSelected, setIsAllSelected] = useState(
     () => mode !== 'edit' || !session?.targetParts?.length
@@ -212,16 +219,34 @@ export default function SessionFormModal({
               장소
             </TextField.Label>
             <div className="flex flex-col gap-3 w-full">
-              <PlaceSearchInput
-                value={form.placeName}
-                onChange={(value, coords) =>
-                  setForm((prev) => ({
-                    ...prev,
-                    placeName: value,
-                    ...(coords ?? {}),
-                  }))
-                }
-              />
+              <div className="flex gap-3 w-full">
+                <TextField.Input
+                  className="flex-1 min-w-0"
+                  inputMode="decimal"
+                  value={latStr}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/[^0-9.]/g, '');
+                    setLatStr(v);
+                    const parsed = parseFloat(v);
+                    if (!isNaN(parsed))
+                      setForm((prev) => ({ ...prev, latitude: parsed }));
+                  }}
+                  placeholder="위도 (latitude)"
+                />
+                <TextField.Input
+                  className="flex-1 min-w-0"
+                  inputMode="decimal"
+                  value={lngStr}
+                  onChange={(e) => {
+                    const v = e.target.value.replace(/[^0-9.]/g, '');
+                    setLngStr(v);
+                    const parsed = parseFloat(v);
+                    if (!isNaN(parsed))
+                      setForm((prev) => ({ ...prev, longitude: parsed }));
+                  }}
+                  placeholder="경도 (longitude)"
+                />
+              </div>
               <TextField.Input
                 value={form.placeDetail}
                 onChange={(e) => set('placeDetail')(e.target.value)}

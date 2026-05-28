@@ -16,6 +16,8 @@ const SessionsDocument = gql(`
       description
       placeName
       placeDetail
+      latitude
+      longitude
       targetParts
       attendanceStatus
       sessionDate

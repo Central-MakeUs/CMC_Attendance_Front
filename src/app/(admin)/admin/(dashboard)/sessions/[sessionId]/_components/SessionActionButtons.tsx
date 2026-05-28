@@ -73,7 +73,7 @@ export default function SessionActionButtons({
           placeDetail: data.placeDetail,
           latitude: data.latitude,
           longitude: data.longitude,
-          sessionDate: `${data.year}-${data.month}-${data.day}`,
+          sessionDate: `${data.year}-${data.month.padStart(2, '0')}-${data.day.padStart(2, '0')}`,
           startTime: data.startTime,
           endTime: data.endTime,
         },

@@ -15,6 +15,8 @@ const SessionsQuery = gql(`
       targetParts
       placeName
       placeDetail
+      latitude
+      longitude
       sessionDate
       startTime
       endTime
