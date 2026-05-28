@@ -43,11 +43,28 @@ async function getSessions(generationNumber: number) {
   }
 }
 
+function getSortedSessions(sessions: Awaited<ReturnType<typeof getSessions>>) {
+  if (sessions.length === 0) return sessions;
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const upcoming = sessions.filter((s) => new Date(s.sessionDate) >= today);
+
+  const pinned =
+    upcoming.length > 0
+      ? upcoming.reduce((a, b) => (a.sessionDate <= b.sessionDate ? a : b))
+      : sessions.reduce((a, b) => (a.sessionDate >= b.sessionDate ? a : b));
+
+  return [pinned, ...sessions.filter((s) => s.id !== pinned.id)];
+}
+
 export default async function AttendancePage() {
   const viewer = await verifySession();
-  const sessions = viewer?.generationNumber
+  const rawSessions = viewer?.generationNumber
     ? await getSessions(viewer.generationNumber)
     : [];
+  const sessions = getSortedSessions(rawSessions);
   const [pinnedSession, ...otherSessions] = sessions;
 
   return (
@@ -63,7 +80,10 @@ export default async function AttendancePage() {
         </div>
       </header>
       <section className="px-4 pt-6 pb-8">
-        <AttendanceCheckCard sessions={sessions} />
+        <AttendanceCheckCard
+          sessions={rawSessions}
+          initialSelectedId={sessions[0]?.id ?? null}
+        />
       </section>
       <div className="h-1.5 bg-grayscale-50 shrink-0" />
       <section className="px-4 pt-6 pb-8 flex flex-col gap-4">

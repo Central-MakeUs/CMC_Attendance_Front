@@ -110,15 +110,15 @@ function getButtonState(session: Session, now: Date): ButtonState {
 
 interface Props {
   sessions: Session[];
+  initialSelectedId: string | null;
 }
 
 export default function AttendanceCheckCard({
   sessions: initialSessions,
+  initialSelectedId,
 }: Props) {
   const [sessions, setSessions] = useState(initialSessions);
-  const [selectedId, setSelectedId] = useState<string | null>(
-    sessions[0]?.id ?? null
-  );
+  const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
   const [isLoading, setIsLoading] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const selectedSession = sessions.find((s) => s.id === selectedId);
