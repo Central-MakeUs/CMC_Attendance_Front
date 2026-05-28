@@ -298,7 +298,7 @@ export default function SessionFormModal({
                 options={TIME_OPTIONS}
                 value={form.startTime}
                 onChange={set('startTime')}
-                placeholder="10:00"
+                placeholder="13:00"
                 className="flex-1 min-w-0"
               />
               <div className="w-3 h-px bg-grayscale-300 shrink-0" />
@@ -306,7 +306,7 @@ export default function SessionFormModal({
                 options={TIME_OPTIONS}
                 value={form.endTime}
                 onChange={set('endTime')}
-                placeholder="16:00"
+                placeholder="18:00"
                 className="flex-1 min-w-0"
               />
             </div>
