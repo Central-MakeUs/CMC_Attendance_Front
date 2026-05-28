@@ -28,7 +28,7 @@ export default function PartStep({ parts, defaultValue, onNext, onBack }: PartSt
       <FunnelHeader step={2} onBack={onBack} />
       <div className="px-4 pt-[22px] flex-1">
         <h1 className="text-2xl font-bold leading-normal text-grayscale-900">
-          활동 기수와 파트를 알려주세요
+          파트를 알려주세요
         </h1>
         <div className="mt-9">
           <SelectField
