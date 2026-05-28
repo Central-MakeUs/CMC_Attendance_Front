@@ -16,7 +16,7 @@ export default function SearchBar({
   placeholder = '검색',
 }: SearchBarProps) {
   return (
-    <div className="flex items-center gap-2 flex-1">
+    <div className="flex items-center gap-2 flex-1 max-w-[391px]">
       <div className="flex items-center gap-1 flex-1 h-10 px-3 py-2 bg-white border border-grayscale-100 rounded-xl">
         <span className="shrink-0">
           <SearchIcon className="text-grayscale-300" />

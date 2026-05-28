@@ -71,11 +71,11 @@ function SelectTrigger({ children, className }: { children: ReactNode; className
   );
 }
 
-function SelectChevron({ className }: { className?: string }) {
+function SelectChevron({ className, children }: { className?: string; children?: ReactNode }) {
   const { isOpen } = useSelectContext();
   return (
     <span className={`transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''} ${className ?? ''}`}>
-      <ChevronDownIcon />
+      {children ?? <ChevronDownIcon />}
     </span>
   );
 }

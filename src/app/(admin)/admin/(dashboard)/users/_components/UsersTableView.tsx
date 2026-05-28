@@ -6,6 +6,7 @@ import Table, { Column } from '@/components/ui/Table';
 import SearchBar from '@/components/ui/SearchBar';
 import Pagination from '@/components/ui/Pagination';
 import Select from '@/components/ui/Select';
+import { ChevronDownFillIcon } from '@/components/icons';
 import { createBrowserClient } from '@/lib/graphql/client';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 import type { Role } from '@/gql/graphql';
@@ -118,7 +119,9 @@ function RoleSelect({
     <Select value={value} onChange={(v) => v && onChange(v as ChangeableRole)}>
       <Select.Trigger className="flex items-center justify-between w-[124px] cursor-pointer">
         <RoleBadge role={value} />
-        <Select.Chevron />
+        <Select.Chevron>
+          <ChevronDownFillIcon />
+        </Select.Chevron>
       </Select.Trigger>
       <Select.Content className="mt-1 bg-white rounded-xl shadow-[0px_4px_12px_0px_rgba(0,0,0,0.12)] overflow-hidden min-w-max">
         {CHANGEABLE_ROLES.map((role) => (
@@ -156,7 +159,9 @@ function GenerationSelect({
         <span className="text-sm text-grayscale-700 font-medium whitespace-nowrap">
           {value != null ? `${value}기` : '-'}
         </span>
-        <Select.Chevron />
+        <Select.Chevron>
+          <ChevronDownFillIcon />
+        </Select.Chevron>
       </Select.Trigger>
       <Select.Content className="mt-1 bg-white rounded-xl shadow-[0px_4px_12px_0px_rgba(0,0,0,0.12)] overflow-hidden min-w-max">
         {generationNumbers.map((num) => (
@@ -386,7 +391,7 @@ export default function UsersTableView() {
           value={search}
           onChange={setSearch}
           onSearch={handleSearch}
-          placeholder="이름 검색"
+          placeholder="검색"
         />
         <div className={isLoading ? 'opacity-50 pointer-events-none' : ''}>
           <Table

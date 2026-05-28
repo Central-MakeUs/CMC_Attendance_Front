@@ -59,14 +59,14 @@ export default function NoteCell({ value, onSave }: NoteCellProps) {
         onChange={(e) => setInputValue(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className="w-full text-grayscale-700 bg-transparent outline-none border-b border-grayscale-100 py-0.5"
+        className="w-full text-grayscale-700 bg-transparent outline-none border-b border-grayscale-100"
       />
     );
   }
 
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-grayscale-700">{value ?? '-'}</span>
+      <span className="text-grayscale-700 border-b border-transparent">{value ?? '-'}</span>
       <button
         type="button"
         onClick={() => setIsEditing(true)}

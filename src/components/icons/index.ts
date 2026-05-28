@@ -4,6 +4,7 @@ export { default as MailIcon } from './MailIcon';
 export { default as CopyIcon } from './CopyIcon';
 export { default as ChevronLeftIcon } from './ChevronLeftIcon';
 export { default as ChevronDownIcon } from './ChevronDownIcon';
+export { default as ChevronDownFillIcon } from './ChevronDownFillIcon';
 export { default as InfoIcon } from './InfoIcon';
 export { default as CheckCircleIcon } from './CheckCircleIcon';
 export { default as CheckCircleOutlineIcon } from './CheckCircleOutlineIcon';
