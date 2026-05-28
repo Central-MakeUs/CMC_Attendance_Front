@@ -94,8 +94,9 @@ const BUTTON_STATES = {
 
 function getBadgeStatus(session: Session, now: Date): AttendanceStatus | null {
   const state = getSessionTimeState(session, now);
-  if (state === 'open') return 'ATTENDANCE';
-  if (state === 'late') return 'LATE';
+  if (state !== 'open' && state !== 'late') return null;
+  if (session.attendanceStatus === 'ATTENDANCE') return 'ATTENDANCE';
+  if (session.attendanceStatus === 'LATE') return 'LATE';
   return null;
 }
 
