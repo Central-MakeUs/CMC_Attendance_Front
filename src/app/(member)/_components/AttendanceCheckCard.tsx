@@ -93,11 +93,8 @@ const BUTTON_STATES = {
 } satisfies Record<string, ButtonState>;
 
 function getBadgeStatus(session: Session, now: Date): AttendanceStatus | null {
-  if (session.attendanceStatus === 'ATTENDANCE') return 'ATTENDANCE';
-  if (session.attendanceStatus === 'LATE') return 'LATE';
-
   const state = getSessionTimeState(session, now);
-  if (state === 'ended') return 'ABSENCE';
+  if (state === 'open') return 'ATTENDANCE';
   if (state === 'late') return 'LATE';
   return null;
 }
