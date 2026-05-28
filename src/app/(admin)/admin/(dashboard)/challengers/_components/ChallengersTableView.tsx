@@ -179,7 +179,7 @@ export default function ChallengersTableView({ generationNumber }: Props) {
     },
     {
       key: 'part',
-      label: '피트',
+      label: '파트',
       className: 'w-40 min-w-[160px]',
     },
     {
