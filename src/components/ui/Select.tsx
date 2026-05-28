@@ -10,6 +10,7 @@ interface SelectContextValue {
   toggle: () => void;
   select: (value: string) => void;
   triggerRef: RefObject<HTMLDivElement | null>;
+  contentRef: RefObject<HTMLUListElement | null>;
 }
 
 const SelectContext = createContext<SelectContextValue | null>(null);
@@ -34,10 +35,15 @@ function SelectRoot<T extends string>({
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLUListElement | null>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      if (
+        ref.current && !ref.current.contains(target) &&
+        contentRef.current && !contentRef.current.contains(target)
+      ) {
         setIsOpen(false);
       }
     };
@@ -53,6 +59,7 @@ function SelectRoot<T extends string>({
         toggle: () => setIsOpen((o) => !o),
         select: (v) => { onChange(v as T); setIsOpen(false); },
         triggerRef,
+        contentRef,
       }}
     >
       <div ref={ref} className={`relative ${className ?? ''}`}>
@@ -81,7 +88,7 @@ function SelectChevron({ className, children }: { className?: string; children?:
 }
 
 function SelectContent({ children, className }: { children: ReactNode; className?: string }) {
-  const { isOpen, triggerRef } = useSelectContext();
+  const { isOpen, triggerRef, contentRef } = useSelectContext();
   const [style, setStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
@@ -99,7 +106,7 @@ function SelectContent({ children, className }: { children: ReactNode; className
 
   if (!isOpen) return null;
   return createPortal(
-    <ul style={style} className={className ?? ''}>
+    <ul ref={contentRef} style={style} className={className ?? ''}>
       {children}
     </ul>,
     document.body
