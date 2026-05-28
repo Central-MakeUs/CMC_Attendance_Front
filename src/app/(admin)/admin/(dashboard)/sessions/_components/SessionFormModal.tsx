@@ -98,7 +98,7 @@ export default function SessionFormModal({
     }
     return {
       sessionName: '',
-      placeName: '임시',
+      placeName: '',
       placeDetail: '',
       latitude: 0,
       longitude: 0,
@@ -248,9 +248,9 @@ export default function SessionFormModal({
                 />
               </div>
               <TextField.Input
-                value={form.placeDetail}
-                onChange={(e) => set('placeDetail')(e.target.value)}
-                placeholder="(추가) 세부장소 입력"
+                value={form.placeName}
+                onChange={(e) => set('placeName')(e.target.value)}
+                placeholder="장소 입력"
               />
             </div>
           </div>
