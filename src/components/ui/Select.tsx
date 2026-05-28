@@ -1,6 +1,7 @@
 'use client';
 
-import { createContext, useContext, useState, useRef, useEffect, ReactNode } from 'react';
+import { createContext, useContext, useState, useRef, useEffect, ReactNode, CSSProperties, RefObject } from 'react';
+import { createPortal } from 'react-dom';
 import { ChevronDownIcon } from '@/components/icons';
 
 interface SelectContextValue {
@@ -8,6 +9,7 @@ interface SelectContextValue {
   isOpen: boolean;
   toggle: () => void;
   select: (value: string) => void;
+  triggerRef: RefObject<HTMLDivElement | null>;
 }
 
 const SelectContext = createContext<SelectContextValue | null>(null);
@@ -31,6 +33,7 @@ function SelectRoot<T extends string>({
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -49,6 +52,7 @@ function SelectRoot<T extends string>({
         isOpen,
         toggle: () => setIsOpen((o) => !o),
         select: (v) => { onChange(v as T); setIsOpen(false); },
+        triggerRef,
       }}
     >
       <div ref={ref} className={`relative ${className ?? ''}`}>
@@ -59,9 +63,9 @@ function SelectRoot<T extends string>({
 }
 
 function SelectTrigger({ children, className }: { children: ReactNode; className?: string }) {
-  const { toggle } = useSelectContext();
+  const { toggle, triggerRef } = useSelectContext();
   return (
-    <div role="button" onClick={toggle} className={className}>
+    <div ref={triggerRef} role="button" onClick={toggle} className={className}>
       {children}
     </div>
   );
@@ -77,12 +81,28 @@ function SelectChevron({ className }: { className?: string }) {
 }
 
 function SelectContent({ children, className }: { children: ReactNode; className?: string }) {
-  const { isOpen } = useSelectContext();
+  const { isOpen, triggerRef } = useSelectContext();
+  const [style, setStyle] = useState<CSSProperties>({});
+
+  useEffect(() => {
+    if (isOpen && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
+      setStyle({
+        position: 'fixed',
+        top: rect.bottom + 12,
+        left: rect.left,
+        width: rect.width,
+        zIndex: 9999,
+      });
+    }
+  }, [isOpen, triggerRef]);
+
   if (!isOpen) return null;
-  return (
-    <ul className={`absolute top-full left-0 z-10 ${className ?? ''}`}>
+  return createPortal(
+    <ul style={style} className={className ?? ''}>
       {children}
-    </ul>
+    </ul>,
+    document.body
   );
 }
 

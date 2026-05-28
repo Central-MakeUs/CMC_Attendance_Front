@@ -42,7 +42,7 @@ function SelectFieldInput({
         </span>
         <Select.Chevron />
       </Select.Trigger>
-      <Select.Content className="mt-3 w-full max-h-[200px] overflow-y-auto bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)]">
+      <Select.Content className=" w-full max-h-[200px] overflow-y-auto bg-white rounded-2xl shadow-[0px_1px_4px_0px_rgba(0,0,0,0.03),0px_4px_12px_0px_rgba(0,0,0,0.16)]">
         {options.map((option) => (
           <Select.Item
             key={option}
