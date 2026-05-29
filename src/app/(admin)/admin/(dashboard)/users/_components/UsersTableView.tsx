@@ -89,20 +89,26 @@ interface UserRecord {
   generationNumber: number | null;
 }
 
-const ROLE_LABELS: Record<Role, string> = {
-  ROOT: 'ROOT',
+const CHANGEABLE_ROLES = ['LEAD', 'CHALLENGER'] as const;
+type ChangeableRole = (typeof CHANGEABLE_ROLES)[number];
+
+const ROLE_LABELS: Record<ChangeableRole, string> = {
   LEAD: '리드',
   CHALLENGER: '챌린저',
 };
 
-const CHANGEABLE_ROLES = ['LEAD', 'CHALLENGER'] as const;
-type ChangeableRole = (typeof CHANGEABLE_ROLES)[number];
-
 const PAGE_SIZE = 15;
 
-function RoleBadge({ role }: { role: Role }) {
+const ROLE_BADGE_STYLES: Record<ChangeableRole, string> = {
+  LEAD: 'bg-primary-light text-primary',
+  CHALLENGER: 'bg-grayscale-50 text-grayscale-700',
+};
+
+function RoleBadge({ role }: { role: ChangeableRole }) {
   return (
-    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-grayscale-50 text-grayscale-700">
+    <span
+      className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold ${ROLE_BADGE_STYLES[role]}`}
+    >
       {ROLE_LABELS[role]}
     </span>
   );
@@ -181,7 +187,6 @@ function GenerationSelect({
     </Select>
   );
 }
-
 
 function TrashIcon() {
   return (
@@ -349,17 +354,12 @@ export default function UsersTableView() {
       key: 'role',
       label: '회원 권한',
       className: 'w-[240px] min-w-[240px]',
-      render: (row) => {
-        if (row.role === 'ROOT') {
-          return <RoleBadge role="ROOT" />;
-        }
-        return (
-          <RoleSelect
-            value={row.role as ChangeableRole}
-            onChange={(role) => handleRoleChange(row.loginId, role)}
-          />
-        );
-      },
+      render: (row) => (
+        <RoleSelect
+          value={row.role as ChangeableRole}
+          onChange={(role) => handleRoleChange(row.loginId, role)}
+        />
+      ),
     },
     {
       key: 'generationNumber',
