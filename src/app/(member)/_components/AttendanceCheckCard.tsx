@@ -74,7 +74,7 @@ const BUTTON_STATES = {
   },
   late: {
     enabled: false,
-    label: '출석 시간이 지났어요',
+    label: '세션에 늦게 왔어요',
     variant: 'attended',
     icon: <CheckCircleOutlineIcon className="size-6 shrink-0" />,
   },
@@ -119,7 +119,9 @@ export default function AttendanceCheckCard({
   initialSelectedId,
 }: Props) {
   const [sessions, setSessions] = useState(initialSessions);
-  const [selectedId, setSelectedId] = useState<string | null>(initialSelectedId);
+  const [selectedId, setSelectedId] = useState<string | null>(
+    initialSelectedId
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [now, setNow] = useState(() => new Date());
   const selectedSession = sessions.find((s) => s.id === selectedId);
