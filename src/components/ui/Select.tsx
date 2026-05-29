@@ -92,7 +92,9 @@ function SelectContent({ children, className }: { children: ReactNode; className
   const [style, setStyle] = useState<CSSProperties>({});
 
   useEffect(() => {
-    if (isOpen && triggerRef.current) {
+    if (!isOpen) return;
+    const update = () => {
+      if (!triggerRef.current) return;
       const rect = triggerRef.current.getBoundingClientRect();
       setStyle({
         position: 'fixed',
@@ -101,7 +103,14 @@ function SelectContent({ children, className }: { children: ReactNode; className
         width: rect.width,
         zIndex: 9999,
       });
-    }
+    };
+    update();
+    window.addEventListener('scroll', update, true);
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, true);
+      window.removeEventListener('resize', update);
+    };
   }, [isOpen, triggerRef]);
 
   if (!isOpen) return null;
