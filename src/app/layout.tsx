@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';
+import { GoogleAnalytics } from '@next/third-parties/google';
 import SplashScreen from '@/components/SplashScreen';
 import { CheckCircleIcon, AlertCircleIcon } from '@/components/icons';
 import './globals.css';
@@ -54,6 +55,7 @@ export default function RootLayout({
           }}
         />
       </body>
+      <GoogleAnalytics gaId="G-EV94GWLJM2" />
     </html>
   );
 }
