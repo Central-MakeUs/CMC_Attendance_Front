@@ -3,6 +3,7 @@ declare namespace kakao.maps.services {
     keywordSearch(
       keyword: string,
       callback: (result: PlaceSearchResult[], status: Status) => void,
+      options?: { size: number }
     ): void;
   }
 

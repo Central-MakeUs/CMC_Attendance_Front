@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Button from '@/components/ui/Button';
 import TextField from '@/components/ui/TextField';
 import SelectField from '@/components/ui/SelectField';
+import PlaceSearchInput from './PlaceSearchInput';
 import type { Part, SessionsQuery } from '@/gql/graphql';
 
 type Session = SessionsQuery['sessions'][number];
@@ -111,14 +112,6 @@ export default function SessionFormModal({
       targetParts: [...PARTS],
     };
   });
-  console.log(form);
-
-  const [latStr, setLatStr] = useState(
-    form.latitude !== 0 ? String(form.latitude) : ''
-  );
-  const [lngStr, setLngStr] = useState(
-    form.longitude !== 0 ? String(form.longitude) : ''
-  );
 
   const [isAllSelected, setIsAllSelected] = useState(
     () => mode !== 'edit' || !session?.targetParts?.length
@@ -219,38 +212,23 @@ export default function SessionFormModal({
               장소
             </TextField.Label>
             <div className="flex flex-col gap-3 w-full">
-              <div className="flex gap-3 w-full">
-                <TextField.Input
-                  className="flex-1 min-w-0"
-                  inputMode="decimal"
-                  value={latStr}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^0-9.]/g, '');
-                    setLatStr(v);
-                    const parsed = parseFloat(v);
-                    if (!isNaN(parsed))
-                      setForm((prev) => ({ ...prev, latitude: parsed }));
-                  }}
-                  placeholder="위도 (latitude)"
-                />
-                <TextField.Input
-                  className="flex-1 min-w-0"
-                  inputMode="decimal"
-                  value={lngStr}
-                  onChange={(e) => {
-                    const v = e.target.value.replace(/[^0-9.]/g, '');
-                    setLngStr(v);
-                    const parsed = parseFloat(v);
-                    if (!isNaN(parsed))
-                      setForm((prev) => ({ ...prev, longitude: parsed }));
-                  }}
-                  placeholder="경도 (longitude)"
-                />
-              </div>
-              <TextField.Input
+              <PlaceSearchInput
                 value={form.placeName}
-                onChange={(e) => set('placeName')(e.target.value)}
-                placeholder="장소 입력"
+                onChange={(name, coords) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    placeName: name,
+                    ...(coords && {
+                      latitude: coords.latitude,
+                      longitude: coords.longitude,
+                    }),
+                  }))
+                }
+              />
+              <TextField.Input
+                value={form.placeDetail}
+                onChange={(e) => set('placeDetail')(e.target.value)}
+                placeholder="상세 장소 입력"
               />
             </div>
           </div>

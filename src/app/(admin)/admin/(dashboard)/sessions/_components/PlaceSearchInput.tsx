@@ -7,26 +7,12 @@ import { useKakaoLoader } from '@/hooks/useKakaoLoader';
 
 type PlaceResult = kakao.maps.services.PlaceSearchResult;
 
-const MOCK_PLACES: PlaceResult[] = [
-  {
-    place_name: '마루 180',
-    road_address_name: '서울 강남구 역삼로 180',
-    address_name: '서울 강남구 역삼동 790-6',
-    x: '127.0388326104599',
-    y: '37.49543341237481',
-  },
-  {
-    place_name: '프론트원',
-    road_address_name: '서울 마포구 마포대로 122',
-    address_name: '서울 마포구 공덕동 254-5',
-    x: '126.9525465',
-    y: '37.5453577',
-  },
-];
-
 interface Props {
   value: string;
-  onChange: (value: string, coords?: { latitude: number; longitude: number }) => void;
+  onChange: (
+    value: string,
+    coords?: { latitude: number; longitude: number }
+  ) => void;
 }
 
 export default function PlaceSearchInput({ value, onChange }: Props) {
@@ -42,7 +28,6 @@ export default function PlaceSearchInput({ value, onChange }: Props) {
       psRef.current = new window.kakao.maps.services.Places();
     }
   }, [kakaoState]);
-
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -68,24 +53,21 @@ export default function PlaceSearchInput({ value, onChange }: Props) {
       return;
     }
 
-    if (!psRef.current) {
-      const filtered = MOCK_PLACES.filter((p) =>
-        p.place_name.toLowerCase().includes(q.toLowerCase())
-      );
-      setResults(filtered);
-      setOpen(filtered.length > 0);
-      return;
-    }
+    if (!psRef.current) return;
 
-    psRef.current.keywordSearch(q, (data, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        setResults(data.slice(0, 5) as PlaceResult[]);
-        setOpen(true);
-      } else {
-        setResults([]);
-        setOpen(false);
-      }
-    });
+    psRef.current.keywordSearch(
+      q,
+      (data, status) => {
+        if (status === window.kakao.maps.services.Status.OK) {
+          setResults(data as PlaceResult[]);
+          setOpen(true);
+        } else {
+          setResults([]);
+          setOpen(false);
+        }
+      },
+      { size: 5 }
+    );
   }
 
   function handleSelect(place: PlaceResult) {
