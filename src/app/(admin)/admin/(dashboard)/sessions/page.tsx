@@ -69,7 +69,7 @@ export default async function SessionsPage({ searchParams }: Props) {
         <h1 className="font-bold text-2xl leading-normal text-grayscale-900">
           세션 관리
         </h1>
-        <CreateSessionButton />
+        {isRoot && <CreateSessionButton />}
       </div>
 
       <div className="grid grid-cols-[repeat(auto-fit,minmax(min(563px,100%),1fr))] gap-6">
