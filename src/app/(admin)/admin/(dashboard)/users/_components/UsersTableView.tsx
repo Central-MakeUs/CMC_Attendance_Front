@@ -351,6 +351,11 @@ export default function UsersTableView() {
       className: 'w-40 min-w-[160px]',
     },
     {
+      key: 'loginId',
+      label: '아이디',
+      className: 'w-40 min-w-[160px]',
+    },
+    {
       key: 'role',
       label: '회원 권한',
       className: 'w-[240px] min-w-[240px]',
