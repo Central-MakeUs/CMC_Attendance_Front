@@ -207,6 +207,7 @@ export default function AttendanceTableView({
   const columns: Column<AttendanceRecord>[] = [
     { key: 'name', label: '이름', render: (row) => row.name },
     { key: 'nickname', label: '닉네임', render: (row) => row.nickname },
+    { key: 'loginId', label: '아이디', render: (row) => row.loginId },
     { key: 'part', label: '파트', render: (row) => row.part },
     {
       key: 'attendanceStatus',
