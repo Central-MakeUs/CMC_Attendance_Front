@@ -1,6 +1,7 @@
 type Query {
   ping: String!
   viewer: Viewer
+  myPage: MyPage!
   loginIdAvailability(loginId: String!): LoginIdAvailability!
   parts: [Part!]!
   generations: [GenerationOption!]!
@@ -26,6 +27,7 @@ type Mutation {
   updateUserRole(input: UpdateUserRoleInput!): ManagedUser!
   updateUserGeneration(input: UpdateUserGenerationInput!): ManagedUser!
   deleteUser(input: DeleteUserInput!): DeleteUserPayload!
+  issueTemporaryPassword(input: IssueTemporaryPasswordInput!): TemporaryPasswordPayload!
   updateChallengerRemark(input: UpdateChallengerRemarkInput!): ChallengerRemark!
   updateSessionAttendanceStatus(input: UpdateSessionAttendanceStatusInput!): SessionAttendance!
   updateSessionAttendanceNote(input: UpdateSessionAttendanceNoteInput!): SessionAttendance!
@@ -33,6 +35,7 @@ type Mutation {
   signUp(input: SignUpInput!): SignUpPayload!
   login(input: LoginInput!): AuthPayload!
   refreshToken(input: RefreshTokenInput!): AuthPayload!
+  changeMyPassword(input: ChangeMyPasswordInput!): ChangeMyPasswordPayload!
 }
 
 type Viewer {
@@ -43,6 +46,15 @@ type Viewer {
   part: Part!
   role: Role!
   generationNumber: Int
+}
+
+type MyPage {
+  nickname: String!
+  part: Part!
+  attendanceCount: Int!
+  lateCount: Int!
+  absenceCount: Int!
+  attendanceScore: Float!
 }
 
 type LoginIdAvailability {
@@ -198,6 +210,16 @@ type DeleteUserPayload {
   deleted: Boolean!
 }
 
+type TemporaryPasswordPayload {
+  loginId: String!
+  temporaryPassword: String!
+}
+
+type ChangeMyPasswordPayload {
+  loginId: String!
+  changed: Boolean!
+}
+
 input CreateGenerationInput {
   number: Int!
   invitationCode: String!
@@ -249,6 +271,14 @@ input UpdateUserGenerationInput {
 
 input DeleteUserInput {
   loginId: String!
+}
+
+input IssueTemporaryPasswordInput {
+  loginId: String!
+}
+
+input ChangeMyPasswordInput {
+  password: String!
 }
 
 input UpdateChallengerRemarkInput {

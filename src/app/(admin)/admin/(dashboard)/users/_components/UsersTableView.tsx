@@ -9,6 +9,7 @@ import Select from '@/components/ui/Select';
 import { ChevronDownFillIcon } from '@/components/icons';
 import { createBrowserClient } from '@/lib/graphql/client';
 import ConfirmModal from '@/components/ui/ConfirmModal';
+import CopyValueModal from '@/components/ui/CopyValueModal';
 import type { Role } from '@/gql/graphql';
 
 const UsersDocument = gql(`
@@ -77,6 +78,15 @@ const DeleteUserDocument = gql(`
     deleteUser(input: $input) {
       deletedLoginId
       deleted
+    }
+  }
+`);
+
+const IssueTemporaryPasswordDocument = gql(`
+  mutation IssueTemporaryPassword($input: IssueTemporaryPasswordInput!) {
+    issueTemporaryPassword(input: $input) {
+      loginId
+      temporaryPassword
     }
   }
 `);
@@ -208,6 +218,43 @@ function TrashIcon() {
   );
 }
 
+function KeyIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="7.5" cy="15.5" r="5.5" />
+      <path d="M21 2l-9.6 9.6" />
+      <path d="M15.5 7.5l3 3L22 7l-3-3" />
+    </svg>
+  );
+}
+
+function IconButton({
+  onClick,
+  children,
+}: {
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex items-center justify-center p-[5px] bg-grayscale-50 rounded-lg text-grayscale-500 hover:bg-grayscale-100 hover:text-grayscale-700 transition-colors shrink-0"
+    >
+      {children}
+    </button>
+  );
+}
+
 export default function UsersTableView() {
   const [records, setRecords] = useState<UserRecord[]>([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -217,6 +264,8 @@ export default function UsersTableView() {
   const [appliedSearch, setAppliedSearch] = useState('');
   const [page, setPage] = useState(1);
   const [deleteTarget, setDeleteTarget] = useState<UserRecord | null>(null);
+  const [passwordTarget, setPasswordTarget] = useState<UserRecord | null>(null);
+  const [temporaryPassword, setTemporaryPassword] = useState<string | null>(null);
 
   useEffect(() => {
     const client = createBrowserClient();
@@ -320,6 +369,22 @@ export default function UsersTableView() {
     }
   };
 
+  const handleIssueTemporaryPassword = async () => {
+    if (!passwordTarget) return;
+    const target = passwordTarget;
+    setPasswordTarget(null);
+
+    try {
+      const client = createBrowserClient();
+      const result = await client.request(IssueTemporaryPasswordDocument, {
+        input: { loginId: target.loginId },
+      });
+      setTemporaryPassword(result.issueTemporaryPassword.temporaryPassword);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleDeleteConfirm = async () => {
     if (!deleteTarget) return;
     const target = deleteTarget;
@@ -371,19 +436,27 @@ export default function UsersTableView() {
       label: '기수',
       className: 'w-[240px] min-w-[240px]',
       render: (row) => (
-        <div className="flex items-center justify-between">
+        <div className="max-w-[120px]">
           <GenerationSelect
             value={row.generationNumber}
             generationNumbers={generationNumbers}
             onChange={(num) => handleGenerationChange(row.loginId, num)}
           />
-          <button
-            type="button"
-            onClick={() => setDeleteTarget(row)}
-            className="flex items-center justify-center p-[5px] bg-grayscale-50 rounded-lg text-grayscale-500 hover:bg-grayscale-100 hover:text-grayscale-700 transition-colors shrink-0"
-          >
+        </div>
+      ),
+    },
+    {
+      key: 'delete',
+      label: '',
+      className: 'w-[84px]',
+      render: (row) => (
+        <div className="flex items-center gap-1">
+          <IconButton onClick={() => setPasswordTarget(row)}>
+            <KeyIcon />
+          </IconButton>
+          <IconButton onClick={() => setDeleteTarget(row)}>
             <TrashIcon />
-          </button>
+          </IconButton>
         </div>
       ),
     },
@@ -421,6 +494,23 @@ export default function UsersTableView() {
           confirmLabel="삭제"
           onConfirm={handleDeleteConfirm}
           onCancel={() => setDeleteTarget(null)}
+        />
+      )}
+      {passwordTarget && (
+        <ConfirmModal
+          message="임시 비밀번호를 발급할까요?"
+          confirmLabel="발급"
+          onConfirm={handleIssueTemporaryPassword}
+          onCancel={() => setPasswordTarget(null)}
+        />
+      )}
+      {temporaryPassword && (
+        <CopyValueModal
+          title="임시 비밀번호"
+          description="임시 비밀번호를 복사해 챌린저에게 공유해 주세요. 창을 닫으면 다시 확인할 수 없어요."
+          value={temporaryPassword}
+          copySuccessMessage="임시 비밀번호가 복사되었습니다."
+          onClose={() => setTemporaryPassword(null)}
         />
       )}
     </>
