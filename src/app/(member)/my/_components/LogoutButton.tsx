@@ -13,7 +13,8 @@ export default function LogoutButton({ className, children }: Props) {
 
   const handleLogout = () => {
     clearAuthTokens();
-    router.push('/login');
+    router.replace("/login");
+    router.refresh();
   };
 
   return (
