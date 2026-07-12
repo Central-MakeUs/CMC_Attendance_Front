@@ -50,7 +50,7 @@ export default function ChangePasswordPage() {
       <header className="flex items-center justify-between h-[54px] bg-white shrink-0">
         <Link
           href="/my"
-          className="flex items-center justify-center w-[65px] h-full pl-4 py-3"
+          className="flex items-center w-[65px] h-full pl-4 py-3"
           aria-label="뒤로가기"
         >
           <ChevronLeftIcon />

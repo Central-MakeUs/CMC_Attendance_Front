@@ -50,12 +50,14 @@ export default async function MyPage() {
   return (
     <div className="flex flex-col min-h-dvh bg-white">
       <header className="flex items-center h-[54px] px-4 bg-white shrink-0">
-        <Link href="/" aria-label="뒤로가기" className="flex items-center gap-2">
-          <ChevronLeftIcon />
+        <div className="flex items-center gap-2">
+          <Link href="/" aria-label="뒤로가기">
+            <ChevronLeftIcon />
+          </Link>
           <span className="text-[18px] font-semibold text-grayscale-900 tracking-[-0.02em] leading-normal">
             마이페이지
           </span>
-        </Link>
+        </div>
       </header>
       <section className="px-4 py-5 flex flex-col gap-2">
         <div className="bg-[#eff1ff] rounded-xl px-3 py-2">
