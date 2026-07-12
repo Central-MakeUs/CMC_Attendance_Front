@@ -1,13 +1,13 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import { gql } from '@/gql';
 import { gqlClient } from '@/lib/graphql/server';
 import { getAccessToken } from '@/lib/cookies/server';
 import { verifySession } from '@/lib/dal';
 import { formatDateWithDay } from '@/lib/date';
-import { PinIcon } from '@/components/icons';
+import { PinIcon, UserIcon } from '@/components/icons';
 import AttendanceCheckCard from './_components/AttendanceCheckCard';
 import SessionAccordionItem from './_components/SessionAccordionItem';
-import LogoutButton from './_components/LogoutButton';
 
 const SessionsQuery = gql(`
   query MemberSessions($generationNumber: Int!) {
@@ -69,7 +69,7 @@ export default async function AttendancePage() {
 
   return (
     <div className="flex flex-col min-h-dvh">
-      <header className="flex items-center h-[54px] px-4 bg-white shrink-0">
+      <header className="flex items-center justify-between h-[54px] px-4 bg-white shrink-0">
         <div className="flex items-center gap-2">
           <div className="relative size-[22px]">
             <Image src="/cmc-logo.svg" alt="CMC" fill />
@@ -78,6 +78,9 @@ export default async function AttendancePage() {
             CMC
           </span>
         </div>
+        <Link href="/my" aria-label="마이페이지" className="shrink-0">
+          <UserIcon className="size-6" />
+        </Link>
       </header>
       <section className="px-4 pt-6 pb-8">
         <AttendanceCheckCard
@@ -136,9 +139,6 @@ export default async function AttendancePage() {
           <SessionAccordionItem key={session.id} session={session} />
         ))}
       </section>
-      <div className="mt-auto sticky bottom-0 flex justify-center py-4 bg-white">
-        <LogoutButton />
-      </div>
     </div>
   );
 }

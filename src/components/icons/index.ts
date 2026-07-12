@@ -18,4 +18,8 @@ export { default as XIcon } from './XIcon';
 export { default as TriangleAlertIcon } from './TriangleAlertIcon';
 export { default as ClockIcon } from './ClockIcon';
 export { default as PinIcon } from './PinIcon';
+export { default as UserIcon } from './UserIcon';
+export { default as InfoFillIcon } from './InfoFillIcon';
+export { default as LockIcon } from './LockIcon';
+export { default as LogOutIcon } from './LogOutIcon';
 export { default as MapPinIcon } from './MapPinIcon';
