@@ -8,8 +8,7 @@ import { InfoIcon } from '@/components/icons';
 import { gql } from '@/gql';
 import { createBrowserClient } from '@/lib/graphql/client';
 import { toast } from 'sonner';
-
-const CREDENTIALS_REGEX = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]{8,16}$/;
+import { PASSWORD_REGEX } from '@/lib/validation';
 
 const LoginIdAvailabilityDoc = gql(`
   query LoginIdAvailability($loginId: String!) {
@@ -32,7 +31,7 @@ export default function CredentialsStep({ defaultValues, onNext, onBack }: Crede
   const [loginIdError, setLoginIdError] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
 
-  const isValid = CREDENTIALS_REGEX.test(loginId) && CREDENTIALS_REGEX.test(password);
+  const isValid = PASSWORD_REGEX.test(loginId) && PASSWORD_REGEX.test(password);
 
   const handleNext = async () => {
     setIsChecking(true);

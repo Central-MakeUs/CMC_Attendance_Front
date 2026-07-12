@@ -37,6 +37,7 @@ type Documents = {
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": typeof types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": typeof types.GenerationsDocument,
     "\n  mutation RequestAttendance($sessionId: ID!, $latitude: Float!, $longitude: Float!) {\n    requestAttendance(input: { sessionId: $sessionId, latitude: $latitude, longitude: $longitude }) {\n      attendanceStatus\n    }\n  }\n": typeof types.RequestAttendanceDocument,
+    "\n  mutation ChangeMyPassword($password: String!) {\n    changeMyPassword(input: { password: $password }) {\n      changed\n    }\n  }\n": typeof types.ChangeMyPasswordDocument,
     "\n  query MyPage {\n    myPage {\n      nickname\n      part\n      attendanceScore\n    }\n  }\n": typeof types.MyPageDocument,
     "\n  query MemberSessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      placeName\n      sessionDate\n      startTime\n      endTime\n      attendanceStatus\n    }\n  }\n": typeof types.MemberSessionsDocument,
     "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      accessToken\n      refreshToken\n      accessTokenExpiresAt\n      refreshTokenExpiresAt\n      role\n      generation {\n        number\n      }\n    }\n  }\n": typeof types.LoginDocument,
@@ -69,6 +70,7 @@ const documents: Documents = {
     "\n  mutation CreateGeneration($input: CreateGenerationInput!) {\n    createGeneration(input: $input) {\n      id\n      number\n    }\n  }\n": types.CreateGenerationDocument,
     "\n  query Generations {\n    generations {\n      id\n      number\n      startDate\n      endDate\n}\n  }\n": types.GenerationsDocument,
     "\n  mutation RequestAttendance($sessionId: ID!, $latitude: Float!, $longitude: Float!) {\n    requestAttendance(input: { sessionId: $sessionId, latitude: $latitude, longitude: $longitude }) {\n      attendanceStatus\n    }\n  }\n": types.RequestAttendanceDocument,
+    "\n  mutation ChangeMyPassword($password: String!) {\n    changeMyPassword(input: { password: $password }) {\n      changed\n    }\n  }\n": types.ChangeMyPasswordDocument,
     "\n  query MyPage {\n    myPage {\n      nickname\n      part\n      attendanceScore\n    }\n  }\n": types.MyPageDocument,
     "\n  query MemberSessions($generationNumber: Int!) {\n    sessions(generationNumber: $generationNumber) {\n      id\n      sessionName\n      description\n      placeName\n      sessionDate\n      startTime\n      endTime\n      attendanceStatus\n    }\n  }\n": types.MemberSessionsDocument,
     "\n  mutation Login($input: LoginInput!) {\n    login(input: $input) {\n      accessToken\n      refreshToken\n      accessTokenExpiresAt\n      refreshTokenExpiresAt\n      role\n      generation {\n        number\n      }\n    }\n  }\n": types.LoginDocument,
@@ -184,6 +186,10 @@ export function gql(source: "\n  query Generations {\n    generations {\n      i
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  mutation RequestAttendance($sessionId: ID!, $latitude: Float!, $longitude: Float!) {\n    requestAttendance(input: { sessionId: $sessionId, latitude: $latitude, longitude: $longitude }) {\n      attendanceStatus\n    }\n  }\n"): (typeof documents)["\n  mutation RequestAttendance($sessionId: ID!, $latitude: Float!, $longitude: Float!) {\n    requestAttendance(input: { sessionId: $sessionId, latitude: $latitude, longitude: $longitude }) {\n      attendanceStatus\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation ChangeMyPassword($password: String!) {\n    changeMyPassword(input: { password: $password }) {\n      changed\n    }\n  }\n"): (typeof documents)["\n  mutation ChangeMyPassword($password: String!) {\n    changeMyPassword(input: { password: $password }) {\n      changed\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
